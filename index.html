@@ -1,0 +1,2728 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://drive.google.com/file/d/1cQyM95Tq7CFTOJ1ZIyhp3Y0CZrbqU7FW/"
+        type="image/x-icon">
+    <title>Study Planner</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600&family=Inter:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-body: #f4f7f6;
+            --bg-card: #ffffff;
+            --text-main: #2d3436;
+            --primary: #6c5ce7;
+            --accent: #00cec9;
+            --border: #dfe6e9;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --border: #334155;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .btn-toggle {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--bg-card);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        /* Section Styling */
+        .subject-section {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        .subject-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subject-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        #taskList {
+            max-height: 700px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        #taskList::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #taskList::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-body);
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            font-size: 1rem;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        button.main-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+
+        button.main-btn:active {
+            transform: scale(0.98);
+        }
+
+        .task-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: grab;
+            position: relative;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+            margin-top: 5px;
+        }
+
+        .task-content {
+            flex-grow: 1;
+        }
+
+        .prog-bg {
+            background: #e2e8f0;
+            height: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .prog-fill {
+            height: 100%;
+            transition: width 0.8s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+        }
+
+        .stat-val {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: block;
+        }
+
+        .links-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .link-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .note-badge {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .completed-list-badge {
+            background: #00b894;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-small {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .btn-del {
+            background: #ff7675;
+            color: #fff;
+        }
+
+        .btn-edit {
+            background: #fdcb6e;
+        }
+
+        .edit-fields {
+            display: none;
+            margin-top: 15px;
+            background: var(--bg-body);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .editing .edit-fields {
+            display: block;
+        }
+
+        .editing .static-view {
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .selection-indicator {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .sync-card {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sync {
+            flex: 1;
+            min-width: 150px;
+            font-size: 14px;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-wrapper {
+            flex: 2;
+            min-width: 250px;
+        }
+
+        .sort-wrapper {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* আধুনিক সিলেক্ট বক্স ডিজাইন */
+        .modern-select {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background-color: var(--bg-card);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            /* ডিফল্ট অ্যারো লুকানো */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236c5ce7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .modern-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        }
+
+        .modern-select:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* সার্চ ইনপুটকে একটু রিফাইন করা */
+        .search-input {
+            margin-bottom: 0 !important;
+            /* কন্টেইনার হ্যান্ডেল করবে */
+            box-shadow: var(--shadow);
+        }
+
+        /* সেকশন টাইটেলকে ক্লিকেবল করা */
+        .subject-title {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg-body);
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .subject-title:hover {
+            background: var(--border);
+        }
+
+        /* অ্যারো আইকন */
+        .subject-title::after {
+            content: '▼';
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+            margin-left: 10px;
+            flex: none;
+            /* আগের flex:1 সরিয়ে এটা দিন */
+        }
+
+        /* সেকশন কলাপ্স হলে অ্যারো ঘুরে যাবে */
+        .subject-section.collapsed .subject-title::after {
+            transform: rotate(-90deg);
+        }
+
+        .subject-section.collapsed .subject-task-list {
+            display: none;
+        }
+
+        /* --- Mobile Responsive CSS with Media Queries --- */
+
+        /* ৬০০ পিক্সেল বা তার চেয়ে ছোট স্ক্রিনের জন্য (Mobile & Small Tablets) */
+        @media screen and (max-width: 600px) {
+            .link-badge {
+                color: var(--primary);
+            }
+
+            /* ১. কার্ড এবং লিস্ট কন্টেইনার অ্যাডজাস্টমেন্ট */
+            .card {
+                padding: 10px;
+                margin: 5px;
+                border-radius: 10px;
+            }
+
+            /* ২. টাস্ক আইটেম লেআউট পরিবর্তন */
+            .task-item {
+                padding: 12px;
+                gap: 8px;
+                flex-direction: column;
+                /* মোবাইলে চেকবক্সকে উপরে বা কন্টেন্টকে নিচে সাজাবে */
+            }
+
+            /* ৩. চেকবক্স বড় করা যাতে টাচ করা সহজ হয় */
+            .task-checkbox {
+                width: 24px;
+                height: 24px;
+                margin-bottom: 5px;
+                cursor: pointer;
+            }
+
+            /* ৪. কোর্স টাইটেল এবং বাটন পাশাপাশি থেকে নিচে নামিয়ে আনা */
+            .task-content .static-view>div {
+                flex-direction: column !important;
+                /* বাটনগুলোকে টাইটেলের নিচে পাঠাবে */
+                gap: 12px;
+            }
+
+            /* ৫. অ্যাকশন বাটনগুলোকে বড় এবং ক্লিকযোগ্য করা */
+            .action-btns {
+                display: flex;
+                width: 100%;
+                gap: 10px;
+                justify-content: flex-start;
+                margin-top: 5px;
+            }
+
+            .btn-small {
+                flex: 1;
+                /* বাটনগুলো সমান চওড়া হবে */
+                padding: 10px;
+                font-size: 14px;
+                text-align: center;
+                color: var(--primary);
+                background-color: var(--bg-body);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+            }
+
+            /* ৬. এডিট ফিল্ডস বা ইনপুট বক্স মোবাইলে ফুল উইথ */
+            .input-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .input-group input {
+                width: 100% !important;
+                font-size: 16px !important;
+                /* ১৬ পিক্সেল দিলে আইফোনে অটো-জুম হবে না */
+                padding: 12px;
+            }
+
+            /* ৭. ভিডিও লিংক (Badges) গুলো একটু বড় করা */
+            .links-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .link-badge {
+                padding: 8px 12px;
+                font-size: 13px;
+                background: #f1f2f6;
+            }
+
+            /* ৮. ফিল্টার এবং সার্চ বক্স মোবাইলে ওপর-নিচে করা */
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-wrapper,
+            .sort-wrapper {
+                width: 100%;
+            }
+        }
+
+        /* ৯. স্ক্রলিং সমস্যা সমাধানের জন্য গ্লোবাল ফিক্স */
+        .subject-task-list {
+            overflow-x: hidden;
+            /* ডানে বামে নড়াচড়া বন্ধ করবে */
+            touch-action: pan-y;
+            /* স্মুথ স্ক্রলিং নিশ্চিত করবে */
+        }
+
+        @media screen and (max-width: 600px) {
+            .task-item {
+                /* মোবাইলে ড্র্যাগিং ইফেক্ট পুরোপুরি বন্ধ করবে */
+                -webkit-user-drag: none;
+                user-select: none;
+                touch-action: pan-y !important;
+                /* শুধু ওপর-নিচে স্ক্রল হবে */
+            }
+        }
+
+        /* CSS For Graph Analysis */
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        /* Streak & Heatmap Styles */
+        .streak-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .streak-info h4 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .streak-count {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .heatmap-container {
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            /* ৭ কলামে ভাগ (সপ্তাহ) */
+            gap: 4px;
+            width: max-content;
+        }
+
+        .heatmap-day {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            background-color: var(--border);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .heatmap-day:hover::after {
+            content: attr(data-date);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3436;
+            color: white;
+            padding: 2px 5px;
+            font-size: 10px;
+            border-radius: 3px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .level-0 {
+            background-color: #ebedf0;
+        }
+
+        .level-1 {
+            background-color: #9be9a8;
+        }
+
+        .level-2 {
+            background-color: #40c463;
+        }
+
+        .level-3 {
+            background-color: #30a14e;
+        }
+
+        .level-4 {
+            background-color: #216e39;
+        }
+
+        /* --- Footer Styling --- */
+        footer {
+            width: 100%;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+            padding: 40px 20px;
+            color: var(--text-main);
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-section h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .footer-section p {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 14px;
+            transition: color 0.3s;
+            opacity: 0.8;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 600px) {
+            .footer-content {
+                text-align: center;
+            }
+        }
+
+        /* --- AI Chatbot Styles --- */
+        #ai-chat-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        #ai-chat-bubble {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        #ai-chat-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        #ai-chat-window {
+            width: 320px;
+            height: 450px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #ai-chat-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #ai-chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #ai-chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bot-msg,
+        .user-msg {
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            max-width: 85%;
+        }
+
+        .bot-msg {
+            background: var(--bg-body);
+            align-self: flex-start;
+            color: var(--text-main);
+        }
+
+        .user-msg {
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+        }
+
+        #ai-chat-input-area {
+            padding: 10px;
+            display: flex;
+            gap: 5px;
+            border-top: 1px solid var(--border);
+        }
+
+        #ai-user-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        #ai-chat-input-area button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .quote-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .quote-card-pro {
+            background: var(--bg-card);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            /* খুবই হালকা শ্যাডো */
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            /* চিকন বর্ডার */
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .quote-card-pro {
+            background: #1e272e;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        #quote-text {
+            font-family: 'Hind Siliguri', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--text-main);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        body.dark-mode #quote-text {
+            color: #d1d8e0;
+        }
+
+        .quote-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .author-line {
+            width: 25px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        #quote-author {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-refresh-minimal {
+            background: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-refresh-minimal:hover {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="authModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:var(--bg-card); padding:25px; border-radius:15px; width:300px; text-align:center;">
+            <h3 id="modalTitle">Cloud Security</h3>
+            <div
+                style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; font-size: 12px; margin-bottom: 15px; border: 1px solid #ffeeba;">
+                ⚠️ <b>Warning:</b> Before you proceed, make sure you have entered <b>JSON Bin Master Key</b> and <b>Bin
+                    ID</b> correctly!
+            </div>
+            <input type="text" id="modalUser" placeholder="Username" style="margin-bottom:10px;">
+            <input type="password" id="modalPass" placeholder="Password" style="margin-bottom:15px;">
+            <button class="main-btn" onclick="processCloudAction()">Confirm</button>
+            <button class="main-btn" style="background:#b2bec3; margin-top:5px;"
+                onclick="document.getElementById('authModal').style.display='none'">Cancel</button>
+            <p id="modalMsg" style="color:red; font-size:12px; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🎓 Course Plan For <span id="profileDisplay" style="color:var(--primary)">None</span></h1>
+            <button class="btn-toggle" onclick="toggleTheme()">🌓 Theme</button>
+        </header>
+
+        <div class="quote-container">
+            <div class="quote-card-pro">
+                <p id="quote-text">আপনার সফলতার যাত্রা শুরু হোক এখান থেকেই...</p>
+                <div class="quote-meta">
+                    <div class="author-info">
+                        <div class="author-line"></div>
+                        <span id="quote-author">লোড হচ্ছে...</span>
+                    </div>
+                    <button onclick="displayRandomQuote()" class="btn-refresh-minimal">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5"
+                            fill="none">
+                            <path
+                                d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15">
+                            </path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            async function displayRandomQuote() {
+                const textEl = document.getElementById('quote-text');
+                const authorEl = document.getElementById('quote-author');
+
+                try {
+                    textEl.style.opacity = '0.3'; // লোডিং এর সময় হালকা ঝাপসা
+                    const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://zenquotes.io/api/random'));
+                    const data = await response.json();
+                    const finalData = JSON.parse(data.contents);
+
+                    if (finalData && finalData.length > 0) {
+                        textEl.innerText = finalData[0].q;
+                        authorEl.innerText = finalData[0].a;
+                    }
+                } catch (error) {
+                    textEl.innerText = "সাফল্যের কোনো শর্টকাট নেই।";
+                    authorEl.innerText = "প্রবাদ";
+                } finally {
+                    textEl.style.opacity = '1';
+                }
+            }
+        </script>
+
+        <div class="sync-card">
+            <button class="main-btn btn-sync" style="background: #27ae60;" onclick="exportData()">📥 Backup
+                Data</button>
+            <button class="main-btn btn-sync" style="background: #2980b9;"
+                onclick="document.getElementById('importFile').click()">📤 Restore Progress</button>
+            <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+            <button class="main-btn btn-sync" style="background: #e67e22;" onclick="openModal('sync')">☁️ Sync
+                Cloud</button>
+            <button class="main-btn btn-sync" style="background: #9b59b6;" onclick="openModal('fetch')">🔄 Fetch
+                Cloud</button>
+        </div>
+
+        <div class="card" style="border: 2px solid var(--primary); background: rgba(108, 92, 231, 0.05);">
+            <h3>⚙️ JSONBin Cloud Setup</h3>
+            <p style="font-size: 13px; color: var(--text-main); opacity: 0.8;">Enter your Master Key and Bin ID to
+                enable cloud sync.</p>
+
+            <div class="input-group">
+                <input type="password" id="jsonbinMasterKey" placeholder="Enter Master Key (X-Master-Key)">
+                <input type="text" id="jsonbinBinId" placeholder="Enter Bin ID">
+            </div>
+
+            <button class="main-btn" onclick="saveAPIConfig()" style="background: var(--primary);">
+                💾 Save Configuration
+            </button>
+
+            <p id="apiStatus" style="font-size: 12px; margin-top: 10px; font-weight: bold; color: var(--primary);"></p>
+        </div>
+
+        <div class="card">
+            <p>Current Profile: <b id="profileDisplay1" style="color:var(--primary)">None</b></p>
+            <div style="display:flex; gap:10px; flex-wrap: wrap;">
+                <input type="text" id="newUserName" placeholder="User Name">
+                <input type="password" id="userPassword" placeholder="Password">
+                <button class="main-btn" style="width:120px;" onclick="loginOrRegister()">Login/Join</button>
+            </div>
+            <h3>🔑 Change Password</h3>
+            <div class="input-group">
+                <input type="password" id="oldPass" placeholder="Current Password">
+                <input type="password" id="newPass" placeholder="New Password">
+                <button class="main-btn" style="background:#d63031" onclick="resetPassword()">Update Password</button>
+            </div>
+            <h3 style="color: #d63031;">⚠️ Danger Zone</h3>
+            <p style="font-size: 13px; color: #636e72;">If you delete your profile, your data will be removed from both
+                cloud and local side
+            </p>
+            <button class="main-btn" style="background:#ff7675" onclick="deleteUserAccount()">Delete My Account
+                Forever</button>
+        </div>
+
+        <div class="card">
+            <h2>Add New Course</h2>
+            <div class="input-group">
+                <input type="text" id="courseName" placeholder="Course Name">
+                <input type="text" id="subjectName" placeholder="Subject (e.g. Physics)">
+                <input type="text" id="chapterNo" placeholder="Chapter No">
+                <input type="number" id="totalClasses" placeholder="Total Classes">
+                <input type="text" id="doneClassList" placeholder="Done Class # (e.g. 1, 2)">
+                <input type="number" id="avgDuration" placeholder="Avg Min" value="45">
+            </div>
+            <div class="input-group">
+                <input type="text" id="classLinks" placeholder="Class Links (Comma separated)">
+                <input type="text" id="noteLink" placeholder="Class Note Link (Optional)">
+            </div>
+            <button class="main-btn" onclick="addTask()">+ Add to Planner</button>
+        </div>
+
+        <div class="card">
+            <div
+                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px">
+                <h2>Active Courses</h2>
+                <div style="display:flex; align-items:center; gap:8px">
+                    <small>Playback Speed:</small>
+                    <select id="globalSpeed" style="width:85px; padding:5px" onchange="renderTasks()">
+                        <option value="1">1.0x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5" selected>1.5x</option>
+                        <option value="1.75">1.75x</option>
+                        <option value="2">2.0x</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-container">
+                <div class="search-wrapper">
+                    <input id="searchInput" class="search-input" placeholder="🔍 Search course, subject or chapter..."
+                        onkeyup="filterTasks()">
+                </div>
+                <div class="sort-wrapper">
+                    <select id="sortFilter" class="modern-select" onchange="renderTasks()">
+                        <option value="default">📑 Default (A-Z Subject)</option>
+                        <option value="total-high">📊 Classes (High to Low)</option>
+                        <option value="total-low">📊 Classes (Low to High)</option>
+                        <option value="duration">⏱️ Duration (Shortest First)</option>
+                        <option value="progress-high">📈 Most Progress (Done %)</option>
+                        <option value="progress-low">📉 Least Progress (Done %)</option>
+                        <option value="section-tasks-high">📂 Subject (More Courses First)</option>
+                        <option value="section-tasks-low">📂 Subject (Less Courses First)</option>
+                    </select>
+                </div>
+            </div>
+            <div id="taskList">
+            </div>
+        </div>
+
+
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="progressTitle">Overall Progress</h2>
+                <span id="selectionModeText" class="selection-indicator"></span>
+            </div>
+
+            <div class="input-group">
+                <div><label><small>Deadline</small></label><input type="datetime-local" id="targetDate"
+                        onchange="saveSettings()"></div>
+                <div><label><small>Daily Goal (Hrs)</small></label><input type="number" id="dailyHours"
+                        onchange="saveSettings()"></div>
+            </div>
+            <div class="prog-bg" style="height: 18px;">
+                <div id="overallProgBar" class="prog-fill"></div>
+            </div>
+            <div id="congratsMessage"
+                style="text-align: center; margin-top: 10px; font-weight: 600; min-height: 20px; color: var(--primary);">
+            </div>
+            <div class="stats-grid">
+                <div class="stat-box"><small>Selected Done</small><span class="stat-val" id="percentDone">0%</span>
+                </div>
+                <div class="stat-box"><small>Time Left</small><span class="stat-val" id="totalTimeLeft">0h 0m</span>
+                </div>
+                <div class="stat-box" style="background:var(--primary); color:white;"><small>Target/Day</small><span
+                        class="stat-val" id="reqStudyTime">0h/d</span></div>
+                <div class="stat-box"><small>Est. Finish</small><span class="stat-val" id="finishDays">0 Days</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="streak-card">
+            <div class="streak-info">
+                <h4>🔥 Study Streak</h4>
+                <p id="streakStatus">Keep it up!</p>
+            </div>
+            <div class="streak-count" id="streakCount">0 Days</div>
+        </div>
+
+        <div class="card" style="text-align: center; border: 2px solid var(--primary);">
+            <h3>⏱️ Focus Timer</h3>
+            <div style="font-size: 2.5rem; font-weight: 800; margin: 10px 0; font-family: monospace;" id="timerDisplay">
+                00:00:00</div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="startBtn" class="main-btn" style="background: #27ae60;" onclick="startTimer()">Start
+                    Study</button>
+                <button id="breakBtn" class="main-btn" style="background: #e67e22; display: none;"
+                    onclick="stopTimer()">Take Break</button>
+            </div>
+            <p style="margin-top: 10px; font-size: 14px;">
+                Today's Focus: <span id="todayStudyTime">0h 0m 0s</span> |
+                Total Break: <span id="todayBreakTime">0h 0m 0s</span>
+            </p>
+        </div>
+
+        <!-- Script For Focus Timer -->
+        <script>
+            let timerInterval;
+            let studyData = {
+                totalStudyTime: 0,
+                totalBreakTime: 0,
+                lastActive: Date.now(),
+                isRunning: false, // true মানে পড়াশোনা চলছে, false মানে ব্রেক চলছে
+                lastResetDate: new Date().toLocaleDateString()
+            };
+
+            // ২. ব্রেক শুরু (পড়াশোনা বন্ধ)
+            function stopTimer() {
+                const now = Date.now();
+
+                // পড়াশোনার সময়টুকু সেভ করে ব্রেক মোডে যাওয়া
+                if (studyData.isRunning) {
+                    const studyElapsed = Math.floor((now - studyData.lastActive) / 1000);
+                    studyData.totalStudyTime += studyElapsed;
+                }
+
+                studyData.isRunning = false;
+                studyData.lastActive = now;
+
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('breakBtn').style.display = 'none';
+
+                // ব্রেক চলাকালীনও টাইমার চলতে থাকবে যাতে ডিসপ্লে আপডেট হয়
+                if (!timerInterval) timerInterval = setInterval(updateTimerDisplay, 1000);
+                saveStudyData();
+            }
+
+            // ১. টাইমার শুরু (পড়াশোনা শুরু)
+            function startTimer() {
+                const now = Date.now();
+
+                // যদি আগে ব্রেক মোডে থাকে, তবে ব্রেক টাইম সেভ করে পড়াশোনা শুরু হবে
+                if (!studyData.isRunning) {
+                    const breakElapsed = Math.floor((now - studyData.lastActive) / 1000);
+                    if (breakElapsed < 43200) {
+                        studyData.totalBreakTime += breakElapsed;
+                    }
+                }
+
+                studyData.isRunning = true;
+                studyData.lastActive = now;
+
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('breakBtn').style.display = 'inline-block';
+
+                if (!timerInterval) timerInterval = setInterval(updateTimerDisplay, 1000);
+                saveStudyData();
+            }
+
+            // ৩. লাইভ ডিসপ্লে আপডেট (পড়াশোনা এবং ব্রেক দুটোর জন্যই)
+            function updateTimerDisplay() {
+                checkDailyReset();
+
+                const now = Date.now();
+                const elapsedSinceLastAction = Math.floor((now - studyData.lastActive) / 1000);
+
+                let displayStudy = studyData.totalStudyTime;
+                let displayBreak = studyData.totalBreakTime;
+
+                if (studyData.isRunning) {
+                    // পড়াশোনা চলছে, তাই স্টাডি টাইমে কারেন্ট সেশন যোগ হবে
+                    displayStudy += elapsedSinceLastAction;
+                } else {
+                    // ব্রেক চলছে, তাই ব্রেক টাইমে কারেন্ট সেশন যোগ হবে
+                    displayBreak += elapsedSinceLastAction;
+                }
+
+                // প্রধান টাইমার ডিসপ্লে (পড়াশোনার সময় দেখাবে)
+                const h = Math.floor(displayStudy / 3600).toString().padStart(2, '0');
+                const m = Math.floor((displayStudy % 3600) / 60).toString().padStart(2, '0');
+                const s = (displayStudy % 60).toString().padStart(2, '0');
+                document.getElementById('timerDisplay').innerText = `${h}:${m}:${s}`;
+
+                // Today's Focus টেক্সট আপডেট
+                document.getElementById('todayStudyTime').innerText =
+                    `${Math.floor(displayStudy / 3600)}h ${Math.floor((displayStudy % 3600) / 60)}m ${displayStudy % 60}s`;
+
+                // Total Break টেক্সট আপডেট (লাইভ হবে এখন)
+                document.getElementById('todayBreakTime').innerText =
+                    `${Math.floor(displayBreak / 3600)}h ${Math.floor((displayBreak % 3600) / 60)}m ${displayBreak % 60}s`;
+            }
+
+            /// ৪. ইউজার ডেটা সেভ
+            // স্ক্রিপ্টের উপরের দিকে এই লাইনগুলো যোগ করুন
+            let totalStudyTime = 0;
+            let totalBreakTime = 0;
+            let sessionsCompleted = 0;
+            let isTimerRunning = false; // টাইমার চলছে কি না তা ট্র্যাক করতে
+            async function saveStudyData() {
+                if (!currentUser) return;
+
+                const timerData = {
+                    totalStudyTime: Number(totalStudyTime) || 0,
+                    totalBreakTime: Number(totalBreakTime) || 0,
+                    sessionsCompleted: Number(sessionsCompleted) || 0,
+                    isRunning: isTimerRunning,
+                    lastUpdate: new Date().toISOString()
+                };
+
+                // লোকাল স্টোরেজে সেভ (ব্যাকআপ হিসেবে)
+                localStorage.setItem(`timer_${currentUser}`, JSON.stringify(timerData));
+
+                try {
+                    // প্রথমে আগের সব ডাটা (Tasks, etc.) নিয়ে আসা যাতে সেগুলো মুছে না যায়
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID1}/latest`, {
+                        headers: { "X-Master-Key": API_KEY }
+                    });
+                    const result = await response.json();
+                    let currentCloudRecord = result.record;
+
+                    // শুধু টাইমারের অংশটি আপডেট করা
+                    currentCloudRecord[`timer_${currentUser}`] = timerData;
+
+                    // পুরো অবজেক্টটি আবার পুশ করা
+                    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID1}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': API_KEY
+                        },
+                        body: JSON.stringify(currentCloudRecord)
+                    });
+                    console.log("Timer Synced to Cloud!");
+                } catch (err) {
+                    console.error("Cloud Sync Failed:", err);
+                }
+            }
+
+            async function syncTimerToCloud(timerData) {
+                try {
+                    // ১. আগে ক্লাউড থেকে বর্তমান ডাটা নিয়ে আসা
+                    const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID1}/latest`, {
+                        headers: { "X-Master-Key": API_KEY }
+                    });
+
+                    if (response.status === 404) {
+                        console.error("Error: BIN ID পাওয়া যায়নি! দয়া করে সঠিক BIN_ID ব্যবহার করুন।");
+                        return;
+                    }
+
+                    const result = await response.json();
+                    let cloudData = result.record || {};
+
+                    // ২. টাইমারের ডাটা অবজেক্টে যোগ করা
+                    cloudData[`timer_${currentUser}`] = timerData;
+
+                    // ৩. আপডেট করা ডাটা পুনরায় ক্লাউডে পাঠানো
+                    const putResponse = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID1}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': API_KEY
+                        },
+                        body: JSON.stringify(cloudData)
+                    });
+
+                    if (putResponse.ok) {
+                        console.log("Timer data successfully synced to cloud!");
+                    }
+                } catch (error) {
+                    console.error("Cloud sync-এ সমস্যা হয়েছে:", error);
+                }
+            }
+
+            function loadStudyTimer() {
+                if (!currentUser) return;
+
+                // ১. ডাটা লোড করা
+                const savedData = localStorage.getItem(`timer_${currentUser}`);
+
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+
+                    // নিশ্চিত হওয়া যে ভ্যালুগুলো সংখ্যা (NaN প্রতিরোধ)
+                    totalStudyTime = Number(data.totalStudyTime) || 0;
+                    totalBreakTime = Number(data.totalBreakTime) || 0;
+                    sessionsCompleted = Number(data.sessionsCompleted) || 0;
+
+                    // ২. বাটন স্টেট ঠিক করা
+                    if (data.isRunning) {
+                        isTimerRunning = true;
+                        document.getElementById('startBtn').style.display = 'none';
+                        document.getElementById('breakBtn').style.display = 'inline-block';
+
+                        // টাইমার রানিং থাকলে ইন্টারভাল শুরু করা
+                        if (!window.timerInterval) {
+                            window.timerInterval = setInterval(updateTimerDisplay, 1000);
+                        }
+                    } else {
+                        isTimerRunning = false;
+                        document.getElementById('startBtn').style.display = 'inline-block';
+                        document.getElementById('breakBtn').style.display = 'none';
+                    }
+                } else {
+                    // ডাটা না থাকলে ডিফল্ট ভ্যালু
+                    totalStudyTime = 0;
+                    totalBreakTime = 0;
+                    sessionsCompleted = 0;
+                    isTimerRunning = false;
+                }
+
+                // ৩. ডিসপ্লে আপডেট করা
+                updateTimerDisplay();
+            }
+
+            // 6. ডেইলি রিসেট ও লোড
+            function checkDailyReset() {
+                const today = new Date().toLocaleDateString();
+                if (studyData.lastResetDate !== today) {
+                    studyData.totalStudyTime = 0;
+                    studyData.totalBreakTime = 0;
+                    studyData.lastResetDate = today;
+                    studyData.lastActive = Date.now();
+                    saveStudyData();
+                }
+            }
+        </script>
+
+        <div class="card">
+            <h3>📊 Subject-wise Progress</h3>
+            <canvas id="subjectChart" style="max-height: 400px;"></canvas>
+            <h3>📅 Activity Heatmap (Last 30 Days)</h3>
+            <div class="heatmap-container">
+                <div id="activityHeatmap" class="heatmap"></div>
+            </div>
+        </div>
+
+        <!-- Script For Chart -->
+        <script>
+            let myChart = null; // গ্লোবাল ভেরিয়েবল যাতে চার্ট বারবার আপডেট করা যায়
+
+            function updateAnalytics() {
+                const canvas = document.getElementById('subjectChart');
+                if (!canvas) return; // ক্যানভাস না থাকলে ফাংশন থামিয়ে দেবে
+
+                const ctx = canvas.getContext('2d');
+
+                // ১. ডাটা প্রসেসিং
+                const subjectData = {};
+                tasks.forEach(task => {
+                    if (!subjectData[task.subject]) {
+                        subjectData[task.subject] = { total: 0, done: 0 };
+                    }
+                    subjectData[task.subject].total += task.total;
+                    subjectData[task.subject].done += task.doneClasses.length;
+                });
+
+                const labels = Object.keys(subjectData);
+                const progressValues = labels.map(sub => {
+                    const data = subjectData[sub];
+                    return Math.round((data.done / data.total) * 100) || 0;
+                });
+
+                // ২. ডাইনামিক কালার জেনারেটর (একেক সাবজেক্টের জন্য আলাদা রঙ)
+                const backgroundColors = labels.map((_, index) => {
+                    const colors = [
+                        'rgba(108, 92, 231, 0.7)',  // বেগুনি
+                        'rgba(0, 206, 201, 0.7)',   // টিল
+                        'rgba(255, 118, 117, 0.7)', // লালচে
+                        'rgba(253, 203, 110, 0.7)', // হলুদ
+                        'rgba(162, 155, 254, 0.7)', // হালকা বেগুনি
+                        'rgba(85, 239, 196, 0.7)',  // হালকা সবুজ
+                        'rgba(250, 177, 160, 0.7)', // কোরাল
+                        'rgba(9, 132, 227, 0.7)'    // নীল
+                    ];
+                    return colors[index % colors.length]; // লিস্টের চেয়ে সাবজেক্ট বেশি হলে আবার শুরু থেকে রঙ নেবে
+                });
+
+                const borderColors = backgroundColors.map(color => color.replace('0.7', '1'));
+
+                // ৩. আগের চার্ট ডিলিট করা
+                if (myChart) {
+                    myChart.destroy();
+                }
+
+                // ৪. নতুন চার্ট তৈরি
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Completion %',
+                            data: progressValues,
+                            backgroundColor: backgroundColors, // এখানে ডাইনামিক কালার ব্যবহার করা হয়েছে
+                            borderColor: borderColors,
+                            borderWidth: 2,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { callback: value => value + "%" } // সাইডে % দেখাবে
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        </script>
+
+        <div class="card">
+            <h3>🎨 Personalization & Themes</h3>
+            <div class="input-group" style="grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));">
+                <div>
+                    <label><small>Heading/Theme</small></label>
+                    <input type="color" id="color-theme" value="#6c5ce7" onchange="updateCustomColors()">
+                </div>
+                <div>
+                    <label><small>0-25% Done</small></label>
+                    <input type="color" id="color-25" value="#ff7675" onchange="updateCustomColors()">
+                </div>
+                <div>
+                    <label><small>26-50% Done</small></label>
+                    <input type="color" id="color-50" value="#fdcb6e" onchange="updateCustomColors()">
+                </div>
+                <div>
+                    <label><small>51-75% Done</small></label>
+                    <input type="color" id="color-75" value="#00cec9" onchange="updateCustomColors()">
+                </div>
+                <div>
+                    <label><small>76-100% Done</small></label>
+                    <input type="color" id="color-100" value="#00b894" onchange="updateCustomColors()">
+                </div>
+            </div>
+            <button class="btn-small" style="margin-top:10px; background:var(--border)" onclick="resetColors()">Reset to
+                Default</button>
+        </div>
+
+        <!-- Script for custom color -->
+        <script>
+            // ১. কালার আপডেট করার ফাংশন
+            function updateCustomColors() {
+                const theme = document.getElementById('color-theme').value;
+                const c25 = document.getElementById('color-25').value;
+                const c50 = document.getElementById('color-50').value;
+                const c75 = document.getElementById('color-75').value;
+                const c100 = document.getElementById('color-100').value;
+
+                // CSS Variables সেট করা
+                document.documentElement.style.setProperty('--primary', theme);
+
+                // কালার অবজেক্ট সেভ করা
+                const customColors = { theme, c25, c50, c75, c100 };
+                localStorage.setItem('userCustomColors', JSON.stringify(customColors));
+
+                renderTasks(); // কালার পরিবর্তনের সাথে সাথে টাস্ক রেন্ডার করা
+            }
+
+            // ১. প্রোগ্রেস কালার পাওয়ার লজিক যা লোকাল স্টোরেজ থেকে কাস্টম কালার নিবে
+            function getProgColor(p) {
+                // লোকাল স্টোরেজ থেকে কাস্টম কালারগুলো পড়া, না থাকলে ডিফল্ট কালার সেট করা
+                const colors = JSON.parse(localStorage.getItem('userCustomColors')) || {
+                    c25: '#ff7675', c50: '#fdcb6e', c75: '#00cec9', c100: '#00b894'
+                };
+
+                if (p >= 100) return colors.c100;
+                if (p >= 75) return colors.c75;
+                if (p >= 50) return colors.c50;
+                return colors.c25;
+            }
+
+            // ৩. পেজ লোড হওয়ার সময় কালার সেট করা
+            function loadCustomColors() {
+                const savedColors = JSON.parse(localStorage.getItem('userCustomColors'));
+                if (savedColors) {
+                    document.getElementById('color-theme').value = savedColors.theme;
+                    document.getElementById('color-25').value = savedColors.c25;
+                    document.getElementById('color-50').value = savedColors.c50;
+                    document.getElementById('color-75').value = savedColors.c75;
+                    document.getElementById('color-100').value = savedColors.c100;
+
+                    document.documentElement.style.setProperty('--primary', savedColors.theme);
+                }
+            }
+
+            // ৪. রিসেট ফাংশন
+            function resetColors() {
+                localStorage.removeItem('userCustomColors');
+                location.reload();
+            }
+
+            // আপনার বিদ্যমান DOMContentLoaded এ loadCustomColors() কল করুন
+            document.addEventListener("DOMContentLoaded", (() => {
+                loadSettings();
+                loadCustomColors(); // নতুন ফাংশন
+                loadStudyTimer();
+                document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
+
+                const savedUser = localStorage.getItem("activeUser");
+                if (savedUser) {
+                    document.getElementById("profileDisplay").innerText = savedUser.toUpperCase();
+                    document.getElementById("profileDisplay1").innerText = savedUser.toUpperCase();
+                    tasks = JSON.parse(localStorage.getItem(`tasks_${savedUser}`)) || [];
+                    selectedTaskIds = new Set(JSON.parse(localStorage.getItem(`selected_${savedUser}`)) || []);
+                }
+                renderTasks();
+                startGlobalTimer();
+                loadAPIConfig();
+            }));
+        </script>
+    </div>
+
+    <script>
+        // JSON Bin ID
+        let API_KEY = '';
+        let BIN_ID = '';
+        let BIN_ID1 = '';
+        let API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+        // ১. Page load houar somoy localStorage theke key load kora
+        function loadAPIConfig() {
+            const savedKey = localStorage.getItem('jsonbin_master_key');
+            const savedBin = localStorage.getItem('jsonbin_bin_id');
+
+            if (savedKey) {
+                API_KEY = savedKey;
+                document.getElementById('jsonbinMasterKey').value = savedKey;
+            }
+
+            if (savedBin) {
+                BIN_ID = savedBin;
+                document.getElementById('jsonbinBinId').value = savedBin;
+            }
+
+            if (API_KEY && BIN_ID) {
+                document.getElementById('apiStatus').innerText = "✅ Keys are active and loaded from storage!";
+            }
+        }
+
+        // ২. Submit Button-e click korle variable ebong localStorage update kora
+        function saveAPIConfig() {
+            const keyInput = document.getElementById('jsonbinMasterKey').value.trim();
+            const binInput = document.getElementById('jsonbinBinId').value.trim();
+
+            if (!keyInput || !binInput) {
+                alert("Please enter both Master Key and Bin ID!");
+                return;
+            }
+
+            // LocalStorage-e save kora
+            localStorage.setItem('jsonbin_master_key', keyInput);
+            localStorage.setItem('jsonbin_bin_id', binInput);
+
+            // Variable update kora (jate refresh chadao kaj kore)
+            API_KEY = keyInput;
+            BIN_ID1 = binInput;
+
+            document.getElementById('apiStatus').innerText = "✨ Successfully Saved & Connected!";
+
+            // User-ke feedback deya
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+
+        let currentUser = localStorage.getItem('activeUser') || null;
+        // এখানে সব ইউজারের নাম এবং পাসওয়ার্ড অবজেক্ট আকারে থাকবে
+        let usersRegistry = JSON.parse(localStorage.getItem('usersRegistry')) || {};
+
+        let tasks = JSON.parse(localStorage.getItem('courseTasks')) || [];
+        let selectedTaskIds = new Set(JSON.parse(localStorage.getItem('selectedTasks')) || []);
+
+        // Functions for account management
+        function loginOrRegister() {
+            const name = document.getElementById('newUserName').value.trim();
+            const pass = document.getElementById('userPassword').value.trim(); // একটি পাসওয়ার্ড ইনপুট ফিল্ড লাগবে
+
+            if (!name || !pass) {
+                alert("Enter User Name & Password");
+                return;
+            }
+
+            if (usersRegistry[name]) {
+                // ইউজার আগে থেকেই আছে, এখন পাসওয়ার্ড চেক করো
+                if (usersRegistry[name].password === pass) {
+                    activateUser(name);
+                } else {
+                    alert("Wrong Password!");
+                }
+            } else {
+                // নতুন ইউজার তৈরি হচ্ছে
+                if (confirm(`Want to create new profile, '${name}'?`)) {
+                    usersRegistry[name] = { password: pass };
+                    localStorage.setItem('usersRegistry', JSON.stringify(usersRegistry));
+                    activateUser(name);
+                }
+            }
+        }
+
+        function activateUser(name) {
+            currentUser = name;
+            localStorage.setItem('activeUser', name);
+
+            // ওই নির্দিষ্ট ইউজারের ডেটা লোড করা
+            tasks = JSON.parse(localStorage.getItem(`tasks_${name}`)) || [];
+            selectedTaskIds = new Set(JSON.parse(localStorage.getItem(`selected_${name}`)) || []);
+
+            document.getElementById('profileDisplay').innerText = name.toUpperCase(); // ডিসপ্লে আপডেট
+            document.getElementById('profileDisplay1').innerText = name.toUpperCase(); // ডিসপ্লে আপডেট
+            renderTasks();
+            loadStudyTimer(); // টাইমার লোড হবে যখন ইউজার লগইন করবে
+            // alert(`Welcome, ${name}!`);
+        }
+
+        function switchUser() {
+            const name = document.getElementById('newUserName').value.trim();
+            if (name) {
+                currentUser = name;
+                localStorage.setItem('activeUser', name);
+                // ওই ইউজারের ডেটা লোড করা
+                tasks = JSON.parse(localStorage.getItem(`tasks_${name}`)) || [];
+                selectedTaskIds = new Set(JSON.parse(localStorage.getItem(`selected_${name}`)) || []);
+                renderTasks();
+                renderUserTabs();
+                document.getElementById('newUserName').value = '';
+            }
+        }
+
+        function saveTasks() {
+            if (!currentUser) {
+                alert("Please login first");
+                return;
+            }
+            localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        function saveSelectionState() {
+            if (!currentUser) return; // ইউজার লগইন না থাকলে সেভ হবে না
+            // ইউজার ভিত্তিক কি (key) ব্যবহার করে সেভ করা হচ্ছে
+            localStorage.setItem(`selected_${currentUser}`, JSON.stringify(Array.from(selectedTaskIds)));
+            updateSelectionUI();
+        }
+
+        function exportData() {
+            const e = {
+                userName: currentUser, // ইউজার নেম যোগ করা হলো
+                tasks: tasks,
+                selected: Array.from(selectedTaskIds),
+                settings: {
+                    deadline: localStorage.getItem("trackerDeadline"),
+                    dailyHrs: localStorage.getItem("trackerDailyHrs"),
+                    theme: localStorage.getItem("theme") || "light"
+                }
+            };
+            const t = new Blob([JSON.stringify(e, null, 2)], { type: "application/json" }),
+                s = URL.createObjectURL(t),
+                n = document.createElement("a");
+            n.href = s;
+            n.download = `${currentUser || 'Guest'}_Planner_Backup_${(new Date).toISOString().split("T")[0]}.json`;
+            n.click();
+            URL.revokeObjectURL(s);
+        }
+
+        function importData(e) {
+            const t = e.target.files[0];
+            if (!t) return;
+            const s = new FileReader;
+            s.onload = function (e) {
+                try {
+                    const t = JSON.parse(e.target.result);
+                    if (confirm("Import This Data? Current data will be replaced!")) {
+
+                        // ১. যদি ফাইলের ভেতর ইউজার নেম থাকে তবে সেটা সেট করো
+                        if (t.userName) {
+                            currentUser = t.userName;
+                            localStorage.setItem("activeUser", t.userName);
+                        }
+
+                        // ২. টাস্ক এবং সিলেক্ট করা ডেটা লোড করো
+                        tasks = t.tasks || [];
+                        selectedTaskIds = new Set(t.selected || []);
+
+                        // ৩. এই ইউজারের নাম দিয়ে লোকাল স্টোরেজে সেভ করে দাও
+                        const userKey = t.userName || "ImportedUser";
+                        localStorage.setItem(`tasks_${userKey}`, JSON.stringify(tasks));
+                        localStorage.setItem(`selected_${userKey}`, JSON.stringify(Array.from(selectedTaskIds)));
+
+                        alert("✅ Data Imported Successfully!");
+                        window.location.reload();
+                    }
+                } catch (e) {
+                    alert("Invalid JSON file!");
+                }
+            }, s.readAsText(t)
+        }
+
+        function addTask() {
+            try {
+                const noteLinkInput = document.getElementById("noteLink"); // input element
+                const noteValue = noteLinkInput ? noteLinkInput.value.trim() : "";
+            }
+            catch {
+
+            };
+
+            const courseInput = document.getElementById('courseName');
+            const subjectInput = document.getElementById('subjectName');
+            const chapterInput = document.getElementById('chapterNo');
+            const totalInput = document.getElementById('totalClasses');
+            const doneListInput = document.getElementById('doneClassList');
+            const durInput = document.getElementById('avgDuration');
+            const linksInput = document.getElementById('classLinks');
+            const noteInput = document.getElementById('noteLink').value;
+
+            if (!courseInput.value || !subjectInput.value) {
+                alert("Please fill Course and Subject name");
+                return;
+            }
+
+            const doneArr = doneListInput.value.split(',').map(n => n.trim()).filter(n => n !== "");
+
+            const task = {
+                id: Date.now(),
+                course: courseInput.value || 'Untitled',
+                subject: subjectInput.value || 'General',
+                chapter: chapterInput.value || '-',
+                total: parseInt(totalInput.value) || 0,
+                doneClasses: doneArr,
+                duration: parseInt(durInput.value) || 0,
+                links: linksInput.value ? linksInput.value.split(',').map(l => l.trim()) : [],
+                note: noteLink.value.trim()
+            };
+
+            tasks.push(task);
+            saveTasks();
+
+            chapterInput.value = '';
+            totalInput.value = '';
+            doneListInput.value = '';
+            linksInput.value = '';
+            noteLink.value = '';
+            courseInput.focus();
+        }
+
+        function toggleSelectTask(id) {
+            if (selectedTaskIds.has(id)) {
+                selectedTaskIds.delete(id);
+            } else {
+                selectedTaskIds.add(id);
+            }
+            saveSelectionState();
+        }
+
+        function updateSelectionUI() {
+            const indicator = document.getElementById('selectionModeText');
+            const title = document.getElementById('progressTitle');
+            if (selectedTaskIds.size > 0) {
+                indicator.innerText = `● ${selectedTaskIds.size} Courses Selected`;
+                title.innerText = "Selected Progress";
+            } else {
+                indicator.innerText = "";
+                title.innerText = "Overall Progress";
+            }
+        }
+
+        function renderTasks() {
+            const listContainer = document.getElementById('taskList');
+            const speed = parseFloat(document.getElementById('globalSpeed').value);
+            const sortVal = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'default';
+            listContainer.innerHTML = '';
+
+            // ১. LocalStorage থেকে কলাপ্স স্টেট ডাটা পড়া
+            const collapsedStatus = JSON.parse(localStorage.getItem('collapsedSections')) || {};
+
+            // ২. সর্টিং লজিক
+            let sortedTasks = [...tasks];
+
+            if (sortVal === "total-high") sortedTasks.sort((a, b) => b.total - a.total);
+            else if (sortVal === "total-low") sortedTasks.sort((a, b) => a.total - b.total);
+            else if (sortVal === "duration") sortedTasks.sort((a, b) => a.duration - b.duration);
+            else if (sortVal === "progress-high") {
+                sortedTasks.sort((a, b) => (b.doneClasses.length / b.total) - (a.doneClasses.length / a.total));
+            }
+            else if (sortVal === "progress-low") {
+                sortedTasks.sort((a, b) => (a.doneClasses.length / a.total) - (b.doneClasses.length / b.total));
+            }
+
+            // ৩. গ্রুপিং করা
+            const grouped = sortedTasks.reduce((acc, task) => {
+                const sub = task.subject || "Other";
+                if (!acc[sub]) acc[sub] = [];
+                acc[sub].push(task);
+                return acc;
+            }, {});
+
+            let subjects = Object.keys(grouped);
+
+            // সেকশন সর্টিং
+            if (sortVal === "section-tasks-high") {
+                subjects.sort((a, b) => grouped[b].length - grouped[a].length);
+            } else if (sortVal === "section-tasks-low") {
+                subjects.sort((a, b) => grouped[a].length - grouped[b].length);
+            } else {
+                subjects.sort();
+            }
+
+            // ৪. Render Each Section
+            subjects.forEach(subject => {
+                const section = document.createElement('div');
+
+                const isCollapsed = collapsedStatus[subject] ? 'collapsed' : '';
+                section.className = `subject-section ${isCollapsed}`;
+
+                section.innerHTML = `
+            <div class="subject-title" onclick="toggleSection(this)">
+                ${subject} (${grouped[subject].length})
+            </div>`;
+
+                const taskWrapper = document.createElement('div');
+                taskWrapper.className = 'subject-task-list';
+
+                grouped[subject].forEach(task => {
+                    if (!task.doneClasses || !Array.isArray(task.doneClasses)) task.doneClasses = [];
+
+                    const doneCount = task.doneClasses.length;
+                    const perc = (doneCount / task.total) * 100 || 0;
+                    const effDur = Math.round(task.duration / speed);
+                    const isChecked = selectedTaskIds.has(task.id) ? 'checked' : '';
+
+                    const div = document.createElement('div');
+                    div.className = 'task-item';
+                    div.dataset.id = task.id;
+                    div.style.borderLeft = `6px solid ${getProgColor(perc)}`;
+
+                    div.innerHTML = `
+                <input type="checkbox" class="task-checkbox" onchange="toggleSelectTask(${task.id})" ${isChecked}>
+                <div class="task-content">
+                    <div class="static-view">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <strong style="color:var(--primary)">${task.course}</strong>
+                                <br>
+                                <small>Chapter <b>${task.chapter}</b></small>
+                                <br>
+                                <span class="completed-list-badge">Done: ${task.doneClasses.length > 0 ? task.doneClasses.join(', ') : 'None'}</span>
+                                <br><small>🕒 ${effDur}m/class | Total: ${task.total}</small>
+                                <div class="links-container">
+                                    ${task.links.map((link, i) => `<a href="${link.includes('http') ? link : 'https://' + link}" target="_blank" class="link-badge">Class ${i + 1}</a>`).join('')}
+                                    ${task.note ? `<a href="${task.note.includes('http') ? task.note : 'https://' + task.note}" target="_blank" class="link-badge note-badge">📄 Note</a>` : ''}
+                                </div>
+                            </div>
+                            <div class="action-btns">
+                                <button class="btn-small btn-edit" onclick="toggleEdit(${task.id})">Edit</button>
+                                <button class="btn-small btn-del" onclick="deleteTask(${task.id})">Del</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="edit-fields">
+                        <div class="input-group">
+                            <input type="text" id="e-course-${task.id}" value="${task.course}" placeholder="Course Name">
+                            <input type="text" id="e-sub-${task.id}" value="${task.subject}" placeholder="Subject Name">
+                            <input type="text" id="e-ch-${task.id}" value="${task.chapter}" placeholder="Chapter/Module No">
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="e-total-${task.id}" value="${task.total}" placeholder="Total Classes">
+                            <input type="text" id="e-done-${task.id}" value="${task.doneClasses.join(', ')}" placeholder="Done Classes (Comma Separated)">
+                            <input type="number" id="e-dur-${task.id}" value="${task.duration}" placeholder="Average Class Duration">
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="e-links-${task.id}" value="${task.links.join(', ')}" placeholder="Video Link">
+                            <input type="text" id="e-note-${task.id}" value="${task.note || ''}" placeholder="Slide Link">
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="main-btn" style="background:#00b894" onclick="handleSaveEdit(${task.id})">Save</button>
+                            <button class="main-btn" style="background:#b2bec3" onclick="toggleEdit(${task.id})">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="prog-bg"><div class="prog-fill" style="width:${perc}%; background:${getProgColor(perc)}"></div></div>
+                    <small>${doneCount} of ${task.total} completed (${Math.round(perc)}%)</small>
+                </div>
+            `;
+                    taskWrapper.appendChild(div);
+                });
+
+                section.appendChild(taskWrapper);
+                listContainer.appendChild(section);
+
+                const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                Sortable.create(taskWrapper, {
+                    animation: 350,
+                    group: 'tasks',
+                    disabled: isMobileDevice || window.innerWidth <= 600,
+                    delay: 0,
+                    touchStartThreshold: 0
+                });
+            });
+
+            updateSelectionUI();
+            if (document.getElementById('searchInput').value) filterTasks();
+
+            // এনালিটিক্স এবং হিটম্যাপ আপডেট
+            updateAnalytics();
+            updateStreaksAndHeatmap();
+        }
+
+        // নতুন ফাংশন: সেভ করার সাথে সাথে সব আপডেট ট্রিগার করবে
+        // Eti apnar script tag-er ekdom sheshe add kore din
+        function handleSaveEdit(id) {
+            saveEdit(id); // Prothome edit save korbe
+
+            // Alpo deri kore jate data-ti updated obosthay pay
+            setTimeout(() => {
+                updateStreaksAndHeatmap(); // Heatmap/Streak update
+                saveData(); // Cloud-e backup pathano
+                console.log("✅ Edit saved and synced to cloud.");
+            }, 500);
+        }
+
+        function saveEdit(id) {
+            const t = tasks.find(x => x.id === id);
+            t.course = document.getElementById(`e-course-${id}`).value;
+            t.subject = document.getElementById(`e-sub-${id}`).value;
+            t.chapter = document.getElementById(`e-ch-${id}`).value;
+            t.total = parseInt(document.getElementById(`e-total-${id}`).value) || 0;
+            const doneInput = document.getElementById(`e-done-${id}`).value;
+            t.doneClasses = doneInput.split(',').map(n => n.trim()).filter(n => n !== "");
+            t.duration = parseInt(document.getElementById(`e-dur-${id}`).value) || 0;
+            t.links = document.getElementById(`e-links-${id}`).value.split(',').map(l => l.trim()).filter(l => l !== "");
+            t.note = document.getElementById(`e-note-${id}`).value.trim();
+            saveTasks();
+        }
+
+        function toggleEdit(id) { document.querySelector(`[data-id="${id}"]`).classList.toggle('editing'); }
+
+        function deleteTask(id) {
+            if (confirm('Delete?')) {
+                tasks = tasks.filter(x => x.id !== id);
+                selectedTaskIds.delete(id);
+                saveSelectionState();
+                saveTasks();
+            }
+        }
+
+        // function getProgColor(p) { return p >= 100 ? '#00b894' : p >= 50 ? '#fdcb6e' : '#ff7675'; }
+
+        // ১. একদম উপরে (currentUser এর নিচে) এই ভেরিয়েবলটি যোগ করুন
+        let isCelebrated = false;
+
+        // ২. আপনার startGlobalTimer ফাংশনটি এইভাবে আপডেট করুন
+        function startGlobalTimer() {
+            setInterval(() => {
+                const speed = parseFloat(document.getElementById('globalSpeed').value) || 1.5;
+                const dailyGoal = parseFloat(document.getElementById('dailyHours').value) || 4;
+                const targetDateInput = document.getElementById('targetDate').value;
+
+                // ১. সিলেকশন অনুযায়ী টাস্ক ফিল্টার
+                let activeTasks = selectedTaskIds.size > 0
+                    ? tasks.filter(t => selectedTaskIds.has(t.id))
+                    : tasks;
+
+                let totalMin = 0;
+                let doneMin = 0;
+
+                activeTasks.forEach(t => {
+                    const effDur = t.duration / speed;
+                    totalMin += (t.total * effDur);
+                    const doneCount = Array.isArray(t.doneClasses) ? t.doneClasses.length : 0;
+                    doneMin += (doneCount * effDur);
+                });
+
+                const remMin = totalMin - doneMin;
+                const remHrs = remMin / 60;
+                const perc = totalMin > 0 ? (doneMin / totalMin * 100) : 0;
+
+                // ২. ডেডলাইন অনুযায়ী দিন গণনা
+                let daysLeft = 0;
+                if (targetDateInput) {
+                    const now = new Date();
+                    const target = new Date(targetDateInput);
+                    const diffTime = target - now;
+                    daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                }
+
+                // ৩. Target/Day (reqStudyTime) ক্যালকুলেশন
+                let targetPerDay = 0;
+                if (daysLeft > 0 && remHrs > 0) {
+                    targetPerDay = (remHrs / daysLeft).toFixed(1);
+                } else if (daysLeft <= 0 && remHrs > 0) {
+                    targetPerDay = remHrs.toFixed(1); // ডেডলাইন পার হয়ে গেলে সবটুকু আজই পড়তে হবে
+                }
+
+                // --- UI আপডেট ---
+                // ১. Target/Day আপডেট
+                const reqStudyTimeElem = document.getElementById('reqStudyTime');
+                if (reqStudyTimeElem) {
+                    reqStudyTimeElem.innerText = targetPerDay + "h/d";
+                }
+
+                // ২. Overall Progress Bar আপডেট
+                const ob = document.getElementById('overallProgBar');
+                if (ob) {
+                    ob.style.width = perc + '%';
+                    ob.style.backgroundColor = getProgColor(perc);
+                }
+
+                // ৩. অন্যান্য স্ট্যাটাস আপডেট
+                document.getElementById('percentDone').innerText = Math.round(perc) + '%';
+                document.getElementById('totalTimeLeft').innerText = Math.floor(remHrs) + 'h ' + Math.round(remMin % 60) + 'm';
+
+                // Est. Finish (আপনার ডেইলি গোল অনুযায়ী কতদিন লাগবে)
+                const finishDays = dailyGoal > 0 ? (remHrs / dailyGoal).toFixed(1) : 0;
+                document.getElementById('finishDays').innerText = finishDays + " Days";
+
+                // কনফেটি ও মেসেজ লজিক (আগের মতোই থাকবে)
+                handleCelebration(perc, totalMin);
+
+            }, 1000);
+        }
+
+        // আলাদা ফাংশন যাতে কোড পরিষ্কার থাকে
+        function handleCelebration(perc, totalMin) {
+            const roundedPerc = Math.round(perc);
+            const msgBox = document.getElementById('congratsMessage');
+
+            if (roundedPerc === 100 && totalMin > 0 && !isCelebrated) {
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 9999 });
+                isCelebrated = true;
+            }
+            if (roundedPerc < 100) isCelebrated = false;
+
+            if (msgBox) {
+                if (roundedPerc === 100 && totalMin > 0) {
+                    msgBox.innerHTML = "🎉 Congratulations! Target Completed! 🏆";
+                } else if (roundedPerc >= 75) {
+                    msgBox.innerHTML = "🚀 Almost there!";
+                } else {
+                    msgBox.innerHTML = "";
+                }
+            }
+        }
+
+        function filterTasks() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const terms = input.replace(/,/g, ' ').split(' ').filter(t => t.trim() !== "");
+            const sections = document.querySelectorAll(".subject-section");
+
+            // LocalStorage থেকে বর্তমান কলাপ্স স্টেট ডাটা পড়া
+            const collapsedStatus = JSON.parse(localStorage.getItem('collapsedSections')) || {};
+
+            sections.forEach(section => {
+                const items = section.querySelectorAll(".task-item");
+                let hasVisible = false;
+
+                items.forEach(item => {
+                    const text = item.innerText.toLowerCase();
+                    const isMatch = terms.every(term => text.includes(term));
+
+                    if (isMatch) {
+                        item.classList.remove("hidden");
+                        hasVisible = true;
+                    } else {
+                        item.classList.add("hidden");
+                    }
+                });
+
+                // সেকশন শো/হাইড করা
+                section.style.display = hasVisible ? "block" : "none";
+
+                // --- কলাপ্স ম্যানেজমেন্ট শুরু ---
+                if (input.length > 0 && hasVisible) {
+                    // ১. সার্চ করলে অটোমেটিক সেকশন খুলে যাবে (expand)
+                    section.classList.remove('collapsed');
+                } else if (input.length === 0) {
+                    // ২. সার্চ খালি করলে লোকাল স্টোরেজ অনুযায়ী আবার আগের অবস্থায় ফিরে যাবে
+                    const subjectName = section.querySelector(".subject-title").innerText.split('(')[0].trim();
+                    if (collapsedStatus[subjectName]) {
+                        section.classList.add('collapsed');
+                    } else {
+                        section.classList.remove('collapsed');
+                    }
+                }
+                // --- কলাপ্স ম্যানেজমেন্ট শেষ ---
+            });
+        }
+
+        function loadSettings() {
+            document.getElementById('targetDate').value = localStorage.getItem('trackerDeadline') || "";
+            document.getElementById('dailyHours').value = localStorage.getItem('trackerDailyHrs') || "4";
+        }
+
+        function saveSettings() {
+            localStorage.setItem('trackerDeadline', document.getElementById('targetDate').value);
+            localStorage.setItem('trackerDailyHrs', document.getElementById('dailyHours').value);
+            renderTasks();
+        }
+
+        function toggleTheme() {
+            const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', t);
+            localStorage.setItem('theme', t);
+        }
+
+        let pendingAction = '';
+
+        function openModal(action) {
+            pendingAction = action;
+            document.getElementById('modalTitle').innerText = (action === 'sync') ? 'Sync to Cloud' : 'Fetch from Cloud';
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        async function processCloudAction() {
+            const user = document.getElementById('modalUser').value.trim();
+            const pass = document.getElementById('modalPass').value.trim();
+            const msg = document.getElementById('modalMsg');
+
+            // API Key ebong Bin ID check
+            if (!API_KEY || !BIN_ID) {
+                document.getElementById('modalMsg').innerText = "Error: Please add JSONBin Master Key & Bin ID first!";
+
+                // User-ke configuration card-e niye jaoa (Optional)
+                setTimeout(() => {
+                    alert("Please scroll down to 'JSONBin Configuration' and save your keys first.");
+                }, 500);
+                return;
+            }
+
+            if (!user || !pass) return msg.innerText = "Enter User Name & Password";
+            msg.innerText = "Processing...";
+
+            try {
+                // ১. সার্ভার থেকে বর্তমানের সব ইউজার ডাটা নিয়ে আসা
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                const result = await res.json();
+
+                // যদি বিন খালি থাকে তবে নতুন অবজেক্ট তৈরি হবে
+                let cloudData = result.record;
+                if (!cloudData || !cloudData.users) {
+                    cloudData = { users: {} };
+                }
+
+                if (pendingAction === 'sync') {
+                    // ২. পাসওয়ার্ড চেক (যদি ইউজার আগে থেকেই ক্লাউডে থাকে)
+                    if (cloudData.users[user] && cloudData.users[user].password !== pass) {
+                        return msg.innerText = "Wrong Password! Doesn't match with server password!";
+                    }
+
+                    // ৩. নতুন ইউজার যোগ করা বা পুরানো ইউজারের ডেটা আপডেট করা
+                    // এখানে ইউজারের নিজস্ব ডেটা (tasks এবং selected) অবজেক্টে ঢুকানো হচ্ছে
+                    cloudData.users[user] = {
+                        password: pass,
+                        data: {
+                            tasks: tasks,
+                            selected: Array.from(selectedTaskIds)
+                        }
+                    };
+
+                    // ৪. পুরো অবজেক্টটি (সব ইউজারসহ) পুনরায় সার্ভারে পাঠানো
+                    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': API_KEY
+                        },
+                        body: JSON.stringify(cloudData) // পুরো cloudData পাঠানো হচ্ছে
+                    });
+
+                    msg.innerText = "";
+                    alert("✅ Cloud Sync Successful!");
+                    document.getElementById('authModal').style.display = 'none';
+                }
+                else if (pendingAction === 'fetch') {
+                    // ৫. ডাটা ফেচ করার লজিক
+                    if (cloudData.users[user] && cloudData.users[user].password === pass) {
+                        const userData = cloudData.users[user].data;
+                        tasks = userData.tasks || [];
+                        selectedTaskIds = new Set(userData.selected || []);
+
+                        // লোকাল স্টোরেজেও আপডেট করে রাখা
+                        localStorage.setItem(`tasks_${user}`, JSON.stringify(tasks));
+                        localStorage.setItem(`selected_${user}`, JSON.stringify(Array.from(selectedTaskIds)));
+                        localStorage.setItem("activeUser", user);
+
+                        alert("✅ Successfully fetched from cloud!");
+                        window.location.reload();
+                    } else {
+                        msg.innerText = "User not found or wrong password!";
+                    }
+                }
+            } catch (e) {
+                msg.innerText = "Server error!";
+                console.error(e);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", (() => {
+            loadSettings();
+            document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
+
+            // রিফ্রেশ করার পর ইউজার অটো-লোড করার লজিক
+            const savedUser = localStorage.getItem("activeUser");
+            if (savedUser) {
+                // প্রোফাইল ডিসপ্লে আপডেট করা
+                document.getElementById("profileDisplay").innerText = savedUser.toUpperCase();
+                document.getElementById("profileDisplay1").innerText = savedUser.toUpperCase();
+
+                // ওই নির্দিষ্ট ইউজারের ডেটা লোড করা
+                tasks = JSON.parse(localStorage.getItem(`tasks_${savedUser}`)) || [];
+                selectedTaskIds = new Set(JSON.parse(localStorage.getItem(`selected_${savedUser}`)) || []);
+            }
+
+            renderTasks();
+            startGlobalTimer();
+        }));
+
+        async function resetPassword() {
+            const oldP = document.getElementById('oldPass').value;
+            const newP = document.getElementById('newPass').value;
+            const msg = document.getElementById('modalMsg'); // মেসেজ দেখানোর জন্য
+
+            // ১. চেক করা কেউ লগইন আছে কিনা
+            if (!currentUser) {
+                alert("আগে লগইন করুন!");
+                return;
+            }
+
+            // ২. রেজিস্ট্রি লোড করা এবং ইউজার চেক করা (এরর ফিক্স)
+            let currentRegistry = JSON.parse(localStorage.getItem("usersRegistry")) || {};
+
+            if (!currentRegistry[currentUser]) {
+                alert("ইউজার ডাটা পাওয়া যায়নি! দয়া করে আবার লগইন করুন।");
+                return;
+            }
+
+            if (!oldP || !newP) {
+                alert("সবগুলো ঘর পূরণ করুন");
+                return;
+            }
+
+            // ৩. পাসওয়ার্ড ভেরিফিকেশন
+            if (currentRegistry[currentUser].password !== oldP) {
+                alert("ভুল বর্তমান পাসওয়ার্ড!");
+                return;
+            }
+
+            if (confirm("Are you sure you want to change your password?")) {
+                // ৪. লোকাল আপডেট
+                currentRegistry[currentUser].password = newP;
+                localStorage.setItem("usersRegistry", JSON.stringify(currentRegistry));
+                usersRegistry = currentRegistry; // গ্লোবাল ভ্যারিয়েবল আপডেট
+
+                alert("⏳ ক্লাউডে আপডেট হচ্ছে, অপেক্ষা করুন...");
+
+                // ৫. ক্লাউড আপডেট (JSONBin)
+                try {
+                    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                        headers: { 'X-Master-Key': API_KEY }
+                    });
+                    let cloudData = (await res.json()).record;
+
+                    if (cloudData && cloudData.users && cloudData.users[currentUser]) {
+                        cloudData.users[currentUser].password = newP;
+
+                        await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                            body: JSON.stringify(cloudData)
+                        });
+                        alert("✅ পাসওয়ার্ড লোকাল এবং ক্লাউডে সফলভাবে আপডেট হয়েছে!");
+                    } else {
+                        alert("✅ লোকাল আপডেট হয়েছে, কিন্তু ক্লাউডে এই ইউজার সিঙ্ক করা নেই।");
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert("⚠️ লোকাল আপডেট হয়েছে কিন্তু ক্লাউডে কানেকশন এরর।");
+                }
+
+                document.getElementById('oldPass').value = "";
+                document.getElementById('newPass').value = "";
+            }
+        }
+
+        async function deleteUserAccount() {
+            // ১. চেক করা কেউ লগইন আছে কিনা
+            if (!currentUser) {
+                alert("আগে লগইন করুন!");
+                return;
+            }
+
+            // ২. চূড়ান্ত সতর্কবার্তা
+            const confirm1 = confirm(`Are you sure you want to remove '${currentUser}' profile forever? This action can't be undone!`);
+            if (!confirm1) return;
+
+            const confirm2 = confirm("Warning: Your course progress will be removed from both local and server side. It won't be possible to recover. Are you sure?");
+            if (!confirm2) return;
+
+            // পাসওয়ার্ড ভেরিফিকেশন (নিরাপত্তার জন্য)
+            const verifyPass = prompt("Write your current password to delete your profile:");
+            let currentRegistry = JSON.parse(localStorage.getItem("usersRegistry")) || {};
+
+            if (!verifyPass || currentRegistry[currentUser].password !== verifyPass) {
+                alert(`Wrong Password! The profile '${currentUser}' can't be deleted!`);
+                return;
+            }
+
+            alert(`⏳ Deleting your profile '${currentUser}' both local and server side...`);
+
+            try {
+                // ৩. ক্লাউড (Cloud) থেকে ডিলিট করা
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                let cloudData = (await res.json()).record;
+
+                if (cloudData && cloudData.users && cloudData.users[currentUser]) {
+                    // ক্লাউড অবজেক্ট থেকে ইউজারকে রিমুভ করা
+                    delete cloudData.users[currentUser];
+
+                    // আপডেট হওয়া ডাটা আবার সার্ভারে পাঠানো
+                    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                        body: JSON.stringify(cloudData)
+                    });
+                    console.log("Cloud data deleted.");
+                }
+
+                // ৪. লোকাল স্টোরেজ (LocalStorage) থেকে ডিলিট করা
+                localStorage.removeItem(`tasks_${currentUser}`); // ইউজারের টাস্ক
+                localStorage.removeItem(`selected_${currentUser}`); // সিলেকশন
+
+                // রেজিস্ট্রি থেকে ইউজার সরানো
+                delete currentRegistry[currentUser];
+                localStorage.setItem("usersRegistry", JSON.stringify(currentRegistry));
+
+                // বর্তমান সেশন ক্লিন করা
+                localStorage.removeItem("activeUser");
+                currentUser = null;
+
+                alert("✅ Your profile has successfully removed!");
+                window.location.reload(); // পেজ রিলোড করে ফ্রেশ স্টার্ট করা
+
+            } catch (e) {
+                console.error(e);
+                alert("⚠️ Server error! Can't delete your profile from server, but was removed from local!");
+            }
+        }
+
+        async function saveData() {
+            if (!currentUser) return;
+
+            localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
+            const activityLog = JSON.parse(localStorage.getItem(`activityLog_${currentUser}`)) || {};
+
+            try {
+                // Prothome cloud theke biddoman sob data namiye nite hobe
+                const getRes = await fetch(API_URL, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                const currentCloudData = await getRes.json();
+                let allUsersData = currentCloudData.record || {};
+
+                // Sudhu bortoman user-er ongshoti update kora
+                allUsersData[currentUser] = {
+                    tasks: tasks,
+                    activity: activityLog
+                };
+
+                // Puro object-ti abar save kora
+                const response = await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify(allUsersData)
+                });
+
+                if (response.ok) {
+                    console.log(`✅ ${currentUser}'s data is syncing!`);
+                }
+            } catch (e) {
+                console.error("❌ Sync Error:", e);
+            }
+        }
+
+        async function loadData() {
+            if (!currentUser) return;
+
+            try {
+                const response = await fetch(API_URL, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                const res = await response.json();
+
+                if (response.ok && res.record && res.record[currentUser]) {
+                    const userData = res.record[currentUser];
+                    tasks = userData.tasks || [];
+                    const activityLog = userData.activity || {};
+
+                    localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
+                    localStorage.setItem(`activityLog_${currentUser}`, JSON.stringify(activityLog));
+
+                    renderTasks();
+                    updateStreaksAndHeatmap();
+                }
+            } catch (e) {
+                console.error("❌ Load Error:", e);
+            }
+
+            // টাইমার ডাটা ক্লাউড থেকে লোড করা
+            if (record[`timer_${currentUser}`]) {
+                const cloudTimer = record[`timer_${currentUser}`];
+                totalStudyTime = Number(cloudTimer.totalStudyTime) || 0;
+                totalBreakTime = Number(cloudTimer.totalBreakTime) || 0;
+                sessionsCompleted = Number(cloudTimer.sessionsCompleted) || 0;
+
+                // রিফ্রেশ করার পর যদি টাইমার রানিং থাকে তবে তা চালু রাখা
+                if (cloudTimer.isRunning) {
+                    isTimerRunning = true;
+                    if (!window.timerInterval) {
+                        window.timerInterval = setInterval(updateTimerDisplay, 1000);
+                    }
+                }
+                updateTimerDisplay(); // ডিসপ্লে আপডেট করা
+            }
+
+            if (currentUser) {
+                loadStudyTimer();
+            }
+        }
+
+        function toggleSection(element) {
+            const section = element.parentElement;
+            const subjectName = element.innerText.split('(')[0].trim(); // সাবজেক্টের নাম বের করা
+
+            section.classList.toggle('collapsed');
+
+            // LocalStorage থেকে বর্তমান স্টেটগুলো নেওয়া
+            let collapsedStatus = JSON.parse(localStorage.getItem('collapsedSections')) || {};
+
+            // নতুন স্টেট সেভ করা
+            if (section.classList.contains('collapsed')) {
+                collapsedStatus[subjectName] = true;
+            } else {
+                delete collapsedStatus[subjectName];
+            }
+
+            localStorage.setItem('collapsedSections', JSON.stringify(collapsedStatus));
+        }
+
+        // ১. স্ট্রিক এবং হিটম্যাপ ডাটা আপডেট ফাংশন
+        function updateStreaksAndHeatmap() {
+            if (!currentUser) return;
+
+            let activityLog = JSON.parse(localStorage.getItem(`activityLog_${currentUser}`)) || {};
+            const today = new Date().toISOString().split('T')[0];
+
+            // Ajker total activity count kora
+            let completedToday = 0;
+            tasks.forEach(task => {
+                task.doneClasses.forEach(done => {
+                    if (done.date === today) completedToday++;
+                });
+            });
+
+            activityLog[today] = completedToday;
+            localStorage.setItem(`activityLog_${currentUser}`, JSON.stringify(activityLog));
+
+            renderStreak(activityLog);
+            renderHeatmap(activityLog);
+
+            // Cloud-e auto-save pathano (Jate backup hoy)
+            saveData();
+        }
+
+        // ২. স্ট্রিক রেন্ডার করা (হিসাব কিতাব)
+        function renderStreak(activityLog) {
+            let streak = 0;
+            let checkDate = new Date();
+
+            while (true) {
+                let dateStr = checkDate.toISOString().split('T')[0];
+                if (activityLog[dateStr]) {
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    // যদি আজ এখনো কিছু না পড়ে থাকে, তবে গতকালের ডাটা দেখে স্ট্রিক বজায় রাখবে
+                    if (dateStr === new Date().toISOString().split('T')[0]) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        continue;
+                    }
+                    break;
+                }
+            }
+
+            document.getElementById('streakCount').innerText = `${streak} Days`;
+            document.getElementById('streakStatus').innerText = streak > 0 ? "You are on fire! 🚀" : "Start your journey today!";
+        }
+
+        // ৩. হিটম্যাপ রেন্ডার করা
+        function renderHeatmap(activityLog) {
+            const heatmapEl = document.getElementById('activityHeatmap');
+            heatmapEl.innerHTML = '';
+
+            const today = new Date();
+            // গত ৬০ দিনের ডাটা দেখাবে
+            for (let i = 59; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(today.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                const count = activityLog[dateStr] || 0;
+
+                let level = 0;
+                if (count > 0 && count <= 2) level = 1;
+                else if (count > 2 && count <= 5) level = 2;
+                else if (count > 5 && count <= 8) level = 3;
+                else if (count > 8) level = 4;
+
+                const daySquare = document.createElement('div');
+                daySquare.className = `heatmap-day level-${level}`;
+                daySquare.setAttribute('data-date', `${dateStr}: ${count} classes`);
+                heatmapEl.appendChild(daySquare);
+            }
+        }
+
+        // Apnar code-e eita achhe:
+        // ১. প্রথমে HTML এলিমেন্টগুলো ধরুন
+        const loginBtn = document.getElementById('loginBtn');
+        const authScreen = document.getElementById('auth-screen');
+        const mainApp = document.getElementById('main-app');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const displayUser = document.getElementById('displayUser');
+
+        // ২. তারপর ইভেন্ট লিসেনার যোগ করুন
+        if (loginBtn) { // নিশ্চিত হওয়া যে বাটনটি পেজে আছে
+            loginBtn.addEventListener('click', () => {
+                const user = usernameInput.value.trim();
+                const pass = passwordInput.value.trim();
+
+                if (user && pass) {
+                    currentUser = user;
+                    currentPassword = pass;
+                    localStorage.setItem('planner_user', user);
+                    localStorage.setItem('planner_pass', pass);
+
+                    authScreen.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    displayUser.innerText = user;
+
+                    // ক্লাউড থেকে ডাটা লোড করা
+                    loadData();
+
+                } else {
+                    alert("Username/Password দিতে হবে!");
+                }
+            });
+        }
+    </script>
+
+    <div id="ai-chat-container">
+        <div id="ai-chat-window" style="display: none;">
+            <div id="ai-chat-header">
+                <span>✨ AI Study Assistant</span>
+                <button onclick="toggleAIChat()">✖</button>
+            </div>
+            <div id="ai-chat-messages">
+                <div class="bot-msg">Hello, I am your study assistant. Ask me any question! (The AI bot won't work now!
+                    It's just for testing purpose!)</div>
+            </div>
+            <div id="ai-chat-input-area">
+                <input type="text" id="ai-user-input" placeholder="Write your question...">
+                <button onclick="sendAIMessage()">Send</button>
+            </div>
+        </div>
+        <div id="ai-chat-bubble" onclick="toggleAIChat()">
+            💬
+        </div>
+    </div>
+
+    <script>
+        // ১. চ্যাট উইন্ডো খোলা এবং Key চেক করা
+        function toggleAIChat() {
+            const windowEl = document.getElementById('ai-chat-window');
+
+            if (windowEl.style.display === 'none' || windowEl.style.display === '') {
+                let savedKey = localStorage.getItem('hf_token');
+
+                if (!savedKey) {
+                    const userKey = prompt("🔒 নিরাপত্তা নিশ্চিত করতে আপনার Hugging Face Token দিন:\n(এটি শুধুমাত্র আপনার ব্রাউজারে সেভ থাকবে)");
+                    if (userKey && userKey.trim().length > 10) {
+                        localStorage.setItem('hf_token', userKey.trim());
+                        savedKey = userKey;
+                    } else {
+                        alert("সঠিক Token ছাড়া AI কাজ করবে না।");
+                        return;
+                    }
+                }
+                windowEl.style.display = 'flex';
+                // চ্যাট বক্স খুললে ইনপুট বক্সে ফোকাস করা
+                document.getElementById('ai-user-input').focus();
+            } else {
+                windowEl.style.display = 'none';
+            }
+        }
+
+        // ২. AI এর সাথে কথা বলার মেইন ফাংশন
+        async function sendAIMessage() {
+            const inputEl = document.getElementById('ai-user-input');
+            const messageContainer = document.getElementById('ai-chat-messages');
+            const userText = inputEl.value.trim();
+            const HF_TOKEN = localStorage.getItem('hf_token');
+
+            if (!userText || !HF_TOKEN) return;
+
+            // ইউজার মেসেজ দেখানো
+            messageContainer.innerHTML += `<div class="user-msg">${userText}</div>`;
+            inputEl.value = '';
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            // AI চিন্তা করছে... মেসেজ
+            const botMsgDiv = document.createElement('div');
+            botMsgDiv.className = 'bot-msg';
+            botMsgDiv.innerText = 'AI চিন্তা করছে...';
+            messageContainer.appendChild(botMsgDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            try {
+                const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${HF_TOKEN}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        inputs: `[INST] ${userText} [/INST]`,
+                        parameters: { max_new_tokens: 250 }
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    let aiText = Array.isArray(data) ? data[0].generated_text : data.generated_text;
+                    // শুধু উত্তরটুকু ফিল্টার করা
+                    aiText = aiText.includes('[/INST]') ? aiText.split('[/INST]').pop().trim() : aiText;
+                    botMsgDiv.innerText = aiText;
+                } else {
+                    botMsgDiv.innerText = "Error: API ব্যস্ত বা টোকেন ভুল।";
+                }
+            } catch (error) {
+                botMsgDiv.innerText = "কানেকশন এরর!";
+            }
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // ৩. Enter Key কাজ করানোর জন্য ইভেন্ট লিসেনার (এটি গুরুত্বপূর্ণ)
+        document.addEventListener('DOMContentLoaded', () => {
+            const aiInput = document.getElementById('ai-user-input');
+            if (aiInput) {
+                aiInput.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault(); // পেজ রিফ্রেশ হওয়া আটকাবে
+                        sendAIMessage();
+                    }
+                });
+            }
+        });
+
+        // Token রিসেট করার জন্য একটি অপশন (প্রয়োজন হলে কনসোল থেকে করা যাবে)
+        function resetAIKey() {
+            localStorage.removeItem('hf_token');
+            alert("Token মুছে ফেলা হয়েছে। এখন নতুন করে দিতে পারবেন।");
+        }
+
+        // Document load holei cloud theke data fetch hbe
+        document.addEventListener('DOMContentLoaded', () => {
+            // Jodi user login thake, tobei fetch hbe
+            if (currentUser) {
+                console.log("Loading data from cloud on startup...");
+                processCloudAction();
+                console.log("successful!")
+            } else {
+                console.log("No user logged in. Please login to fetch cloud data.");
+            }
+        });
+    </script>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🎓 Study Planner</h3>
+                <p>Your personal companion for organized and efficient learning. Track your progress, maintain streaks,
+                    and reach your goals faster.</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>🔗 Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="exportData()">Backup Your Data</a></li>
+                    <li><a href="#" onclick="document.getElementById('importFile').click()">Restore Progress</a></li>
+                    <li><a href="#" onclick="toggleTheme()">Switch Theme</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>🛠️ Features</h3>
+                <p>Subject-wise Analytics, Focus Timer, Activity Heatmap, and Cloud Sync capabilities to keep you on
+                    track.</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            &copy; 2026 Study Planner. Built by <span style="color: var(--primary);">Rahul Acharya Rajon</span> with
+            Gemini, ChatGPT for Students
+        </div>
+    </footer>
+</body>
+
+</html>
