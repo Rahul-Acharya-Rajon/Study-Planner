@@ -42,41 +42,108 @@
             background-color: var(--bg-body);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 920px;
+            padding: 24px 16px 40px;
+            box-sizing: border-box;
+        }
+
+        /* ===== Section Groups for better structure ===== */
+        .section-group {
+            margin-bottom: 28px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--primary);
+            opacity: 0.85;
+            margin: 0 0 12px 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+            opacity: 0.6;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            padding: 8px 0;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            font-size: 1.55rem;
+            margin: 0;
+            line-height: 1.3;
+            font-weight: 700;
         }
 
         .btn-toggle {
-            padding: 10px 20px;
+            padding: 10px 18px;
             cursor: pointer;
-            border-radius: 20px;
+            border-radius: 12px;
             border: 1px solid var(--border);
             background: var(--bg-card);
             color: var(--text-main);
             font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: var(--shadow);
+            white-space: nowrap;
+        }
+
+        .btn-toggle:hover {
+            border-color: var(--primary);
+            color: var(--primary);
         }
 
         .card {
             background: var(--bg-card);
-            padding: 25px;
-            border-radius: 15px;
+            padding: 22px 24px;
+            border-radius: 16px;
             box-shadow: var(--shadow);
-            margin-bottom: 25px;
+            margin-bottom: 18px;
             border: 1px solid var(--border);
+        }
+
+        .card h2,
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+        }
+
+        .card>p {
+            margin-top: 0;
+            line-height: 1.5;
         }
 
         /* Section Styling */
@@ -106,7 +173,7 @@
         #taskList {
             max-height: 700px;
             overflow-y: auto;
-            padding: 20px;
+            padding: 8px 4px 12px;
         }
 
         #taskList::-webkit-scrollbar {
@@ -120,41 +187,57 @@
 
         .input-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
         }
 
         input,
         select {
-            padding: 12px;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border-radius: 10px;
             border: 1px solid var(--border);
             background: var(--bg-body);
             color: var(--text-main);
             width: 100%;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
         }
 
         .search-input {
             width: 100%;
-            padding: 12px 20px;
+            padding: 12px 18px;
             border-radius: 12px;
             border: 2px solid var(--primary);
             font-size: 1rem;
-            margin-bottom: 20px;
+            margin-bottom: 0;
             outline: none;
+            background: var(--bg-body);
+            color: var(--text-main);
         }
 
         button.main-btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             width: 100%;
-            transition: transform 0.2s;
+            transition: transform 0.15s, opacity 0.2s, box-shadow 0.2s;
+            font-size: 0.95rem;
+        }
+
+        button.main-btn:hover {
+            opacity: 0.92;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.25);
         }
 
         button.main-btn:active {
@@ -201,23 +284,31 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 18px;
         }
 
         .stat-box {
-            padding: 15px;
+            padding: 16px 12px;
             border-radius: 12px;
             text-align: center;
             background: var(--bg-body);
             border: 1px solid var(--border);
         }
 
+        .stat-box small {
+            display: block;
+            opacity: 0.75;
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
         .stat-val {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 800;
             display: block;
+            line-height: 1.2;
         }
 
         .links-container {
@@ -306,35 +397,34 @@
         }
 
         .sync-card {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
             gap: 10px;
-            justify-content: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
+            margin-bottom: 0;
         }
 
         .btn-sync {
-            flex: 1;
-            min-width: 150px;
-            font-size: 14px;
+            min-width: 0;
+            font-size: 0.9rem;
+            padding: 12px 10px;
         }
 
         .filter-container {
             display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: stretch;
         }
 
         .search-wrapper {
             flex: 2;
-            min-width: 250px;
+            min-width: 220px;
         }
 
         .sort-wrapper {
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
         }
 
         /* আধুনিক সিলেক্ট বক্স ডিজাইন */
@@ -415,15 +505,42 @@
 
         /* ৬০০ পিক্সেল বা তার চেয়ে ছোট স্ক্রিনের জন্য (Mobile & Small Tablets) */
         @media screen and (max-width: 600px) {
+            .container {
+                padding: 16px 12px 32px;
+            }
+
+            .section-label {
+                font-size: 0.7rem;
+                margin-bottom: 10px;
+            }
+
             .link-badge {
                 color: var(--primary);
             }
 
             /* ১. কার্ড এবং লিস্ট কন্টেইনার অ্যাডজাস্টমেন্ট */
             .card {
-                padding: 10px;
-                margin: 5px;
-                border-radius: 10px;
+                padding: 16px 14px;
+                margin-bottom: 14px;
+                border-radius: 12px;
+            }
+
+            header h1 {
+                font-size: 1.25rem;
+            }
+
+            .quote-card-pro {
+                padding: 18px 16px;
+            }
+
+            .streak-card {
+                padding: 14px 16px;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .streak-count {
+                font-size: 1.5rem;
             }
 
             /* ২. টাস্ক আইটেম লেআউট পরিবর্তন */
@@ -539,19 +656,27 @@
             justify-content: space-between;
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 18px 22px;
+            border-radius: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
         }
 
         .streak-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 1.15rem;
+        }
+
+        .streak-info p {
             margin: 0;
-            font-size: 1.2rem;
+            opacity: 0.9;
+            font-size: 0.9rem;
         }
 
         .streak-count {
-            font-size: 2rem;
-            font-weight: bold;
+            font-size: 1.85rem;
+            font-weight: 800;
+            white-space: nowrap;
         }
 
         .heatmap-container {
@@ -790,19 +915,16 @@
         }
 
         .quote-container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 0 20px;
+            max-width: 100%;
+            margin: 0 0 24px 0;
         }
 
         .quote-card-pro {
             background: var(--bg-card);
-            padding: 30px 40px;
-            border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
-            /* খুবই হালকা শ্যাডো */
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            /* চিকন বর্ডার */
+            padding: 24px 28px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
             transition: all 0.3s ease;
         }
 
@@ -866,6 +988,34 @@
         .btn-refresh-minimal:hover {
             background: var(--primary);
             color: white;
+        }
+
+        /* Color Input Styling Fix */
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100% !important;
+            height: 45px !important;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 2px;
+            background-color: var(--bg-card);
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 6px;
+        }
+
+        input[type="color"]::-moz-color-swatch {
+            border: none;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -939,164 +1089,194 @@
             }
         </script>
 
-        <div class="sync-card">
-            <button class="main-btn btn-sync" style="background: #27ae60;" onclick="exportData()">📥 Backup
-                Data</button>
-            <button class="main-btn btn-sync" style="background: #2980b9;"
-                onclick="document.getElementById('importFile').click()">📤 Restore Progress</button>
-            <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
-            <button class="main-btn btn-sync" style="background: #e67e22;" onclick="openModal('sync')">☁️ Sync
-                Cloud</button>
-            <button class="main-btn btn-sync" style="background: #9b59b6;" onclick="openModal('fetch')">🔄 Fetch
-                Cloud</button>
-        </div>
-
-        <div class="card" style="border: 2px solid var(--primary); background: rgba(108, 92, 231, 0.05);">
-            <h3>⚙️ JSONBin Cloud Setup</h3>
-            <p style="font-size: 13px; color: var(--text-main); opacity: 0.8;">Enter your Master Key and Bin ID to
-                enable cloud sync.</p>
-
-            <div class="input-group">
-                <input type="password" id="jsonbinMasterKey" placeholder="Enter Master Key (X-Master-Key)">
-                <input type="text" id="jsonbinBinId" placeholder="Enter Bin ID">
+        <!-- ===== DATA & CLOUD ===== -->
+        <div class="section-group">
+            <div class="section-label">Data & Cloud Sync</div>
+            <div class="sync-card">
+                <button class="main-btn btn-sync" style="background: #27ae60;" onclick="exportData()">📥 Backup
+                    Data</button>
+                <button class="main-btn btn-sync" style="background: #2980b9;"
+                    onclick="document.getElementById('importFile').click()">📤 Restore Progress</button>
+                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+                <button class="main-btn btn-sync" style="background: #e67e22;" onclick="openModal('sync')">☁️ Sync
+                    Cloud</button>
+                <button class="main-btn btn-sync" style="background: #9b59b6;" onclick="openModal('fetch')">🔄 Fetch
+                    Cloud</button>
             </div>
 
-            <button class="main-btn" onclick="saveAPIConfig()" style="background: var(--primary);">
-                💾 Save Configuration
-            </button>
+            <div class="card"
+                style="border: 2px solid var(--primary); background: rgba(108, 92, 231, 0.05); margin-top: 14px;">
+                <h3>⚙️ JSONBin Cloud Setup</h3>
+                <p style="font-size: 13px; color: var(--text-main); opacity: 0.8;">Enter your Master Key and Bin ID to
+                    enable cloud sync.</p>
 
-            <p id="apiStatus" style="font-size: 12px; margin-top: 10px; font-weight: bold; color: var(--primary);"></p>
-        </div>
-
-        <div class="card">
-            <p>Current Profile: <b id="profileDisplay1" style="color:var(--primary)">None</b></p>
-            <div style="display:flex; gap:10px; flex-wrap: wrap;">
-                <input type="text" id="newUserName" placeholder="User Name">
-                <input type="password" id="userPassword" placeholder="Password">
-                <button class="main-btn" style="width:120px;" onclick="loginOrRegister()">Login/Join</button>
-            </div>
-            <h3>🔑 Change Password</h3>
-            <div class="input-group">
-                <input type="password" id="oldPass" placeholder="Current Password">
-                <input type="password" id="newPass" placeholder="New Password">
-                <button class="main-btn" style="background:#d63031" onclick="resetPassword()">Update Password</button>
-            </div>
-            <h3 style="color: #d63031;">⚠️ Danger Zone</h3>
-            <p style="font-size: 13px; color: #636e72;">If you delete your profile, your data will be removed from both
-                cloud and local side
-            </p>
-            <button class="main-btn" style="background:#ff7675" onclick="deleteUserAccount()">Delete My Account
-                Forever</button>
-        </div>
-
-        <div class="card">
-            <h2>Add New Course</h2>
-            <div class="input-group">
-                <input type="text" id="courseName" placeholder="Course Name">
-                <input type="text" id="subjectName" placeholder="Subject (e.g. Physics)">
-                <input type="text" id="chapterNo" placeholder="Chapter No">
-                <input type="number" id="totalClasses" placeholder="Total Classes">
-                <input type="text" id="doneClassList" placeholder="Done Class # (e.g. 1, 2)">
-                <input type="number" id="avgDuration" placeholder="Avg Min" value="45">
-            </div>
-            <div class="input-group">
-                <input type="text" id="classLinks" placeholder="Class Links (Comma separated)">
-                <input type="text" id="noteLink" placeholder="Class Note Link (Optional)">
-            </div>
-            <button class="main-btn" onclick="addTask()">+ Add to Planner</button>
-        </div>
-
-        <div class="card">
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px">
-                <h2>Active Courses</h2>
-                <div style="display:flex; align-items:center; gap:8px">
-                    <small>Playback Speed:</small>
-                    <select id="globalSpeed" style="width:85px; padding:5px" onchange="renderTasks()">
-                        <option value="1">1.0x</option>
-                        <option value="1.25">1.25x</option>
-                        <option value="1.5" selected>1.5x</option>
-                        <option value="1.75">1.75x</option>
-                        <option value="2">2.0x</option>
-                    </select>
+                <div class="input-group">
+                    <input type="password" id="jsonbinMasterKey" placeholder="Enter Master Key (X-Master-Key)">
+                    <input type="text" id="jsonbinBinId" placeholder="Enter Bin ID">
                 </div>
-            </div>
 
-            <div class="filter-container">
-                <div class="search-wrapper">
-                    <input id="searchInput" class="search-input" placeholder="🔍 Search course, subject or chapter..."
-                        onkeyup="filterTasks()">
-                </div>
-                <div class="sort-wrapper">
-                    <select id="sortFilter" class="modern-select" onchange="renderTasks()">
-                        <option value="default">📑 Default (A-Z Subject)</option>
-                        <option value="total-high">📊 Classes (High to Low)</option>
-                        <option value="total-low">📊 Classes (Low to High)</option>
-                        <option value="duration">⏱️ Duration (Shortest First)</option>
-                        <option value="progress-high">📈 Most Progress (Done %)</option>
-                        <option value="progress-low">📉 Least Progress (Done %)</option>
-                        <option value="section-tasks-high">📂 Subject (More Courses First)</option>
-                        <option value="section-tasks-low">📂 Subject (Less Courses First)</option>
-                    </select>
-                </div>
-            </div>
-            <div id="taskList">
+                <button class="main-btn" onclick="saveAPIConfig()" style="background: var(--primary);">
+                    💾 Save Configuration
+                </button>
+
+                <p id="apiStatus" style="font-size: 12px; margin-top: 10px; font-weight: bold; color: var(--primary);">
+                </p>
             </div>
         </div>
 
-
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2 id="progressTitle">Overall Progress</h2>
-                <span id="selectionModeText" class="selection-indicator"></span>
-            </div>
-
-            <div class="input-group">
-                <div><label><small>Deadline</small></label><input type="datetime-local" id="targetDate"
-                        onchange="saveSettings()"></div>
-                <div><label><small>Daily Goal (Hrs)</small></label><input type="number" id="dailyHours"
-                        onchange="saveSettings()"></div>
-            </div>
-            <div class="prog-bg" style="height: 18px;">
-                <div id="overallProgBar" class="prog-fill"></div>
-            </div>
-            <div id="congratsMessage"
-                style="text-align: center; margin-top: 10px; font-weight: 600; min-height: 20px; color: var(--primary);">
-            </div>
-            <div class="stats-grid">
-                <div class="stat-box"><small>Selected Done</small><span class="stat-val" id="percentDone">0%</span>
+        <!-- ===== PROFILE ===== -->
+        <div class="section-group">
+            <div class="section-label">Profile & Account</div>
+            <div class="card">
+                <p style="margin-bottom: 12px;">Current Profile: <b id="profileDisplay1"
+                        style="color:var(--primary)">None</b></p>
+                <div class="input-group" style="align-items: stretch;">
+                    <input type="text" id="newUserName" placeholder="User Name">
+                    <input type="password" id="userPassword" placeholder="Password">
+                    <button class="main-btn" onclick="loginOrRegister()">Login / Join</button>
                 </div>
-                <div class="stat-box"><small>Time Left</small><span class="stat-val" id="totalTimeLeft">0h 0m</span>
+                <h3 style="margin-top: 22px;">🔑 Change Password</h3>
+                <div class="input-group">
+                    <input type="password" id="oldPass" placeholder="Current Password">
+                    <input type="password" id="newPass" placeholder="New Password">
+                    <button class="main-btn" style="background:#d63031" onclick="resetPassword()">Update
+                        Password</button>
                 </div>
-                <div class="stat-box" style="background:var(--primary); color:white;"><small>Target/Day</small><span
-                        class="stat-val" id="reqStudyTime">0h/d</span></div>
-                <div class="stat-box"><small>Est. Finish</small><span class="stat-val" id="finishDays">0 Days</span>
+                <div style="margin-top: 22px; padding-top: 16px; border-top: 1px dashed var(--border);">
+                    <h3 style="color: #d63031; margin-bottom: 8px;">⚠️ Danger Zone</h3>
+                    <p style="font-size: 13px; color: #636e72; margin-bottom: 12px;">If you delete your profile, your
+                        data will be removed from both
+                        cloud and local side
+                    </p>
+                    <button class="main-btn" style="background:#ff7675" onclick="deleteUserAccount()">Delete My Account
+                        Forever</button>
                 </div>
             </div>
         </div>
 
-        <div class="streak-card">
-            <div class="streak-info">
-                <h4>🔥 Study Streak</h4>
-                <p id="streakStatus">Keep it up!</p>
+        <!-- ===== COURSES ===== -->
+        <div class="section-group">
+            <div class="section-label">Courses & Planner</div>
+            <div class="card">
+                <h2>Add New Course</h2>
+                <div class="input-group">
+                    <input type="text" id="courseName" placeholder="Course Name">
+                    <input type="text" id="subjectName" placeholder="Subject (e.g. Physics)">
+                    <input type="text" id="chapterNo" placeholder="Chapter No">
+                    <input type="number" id="totalClasses" placeholder="Total Classes">
+                    <input type="text" id="doneClassList" placeholder="Done Class # (e.g. 1, 2)">
+                    <input type="number" id="avgDuration" placeholder="Avg Min" value="45">
+                </div>
+                <div class="input-group">
+                    <input type="text" id="classLinks" placeholder="Class Links (Comma separated)">
+                    <input type="text" id="noteLink" placeholder="Class Note Link (Optional)">
+                </div>
+                <button class="main-btn" onclick="addTask()">+ Add to Planner</button>
             </div>
-            <div class="streak-count" id="streakCount">0 Days</div>
-        </div>
 
-        <div class="card" style="text-align: center; border: 2px solid var(--primary);">
-            <h3>⏱️ Focus Timer</h3>
-            <div style="font-size: 2.5rem; font-weight: 800; margin: 10px 0; font-family: monospace;" id="timerDisplay">
-                00:00:00</div>
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <button id="startBtn" class="main-btn" style="background: #27ae60;" onclick="startTimer()">Start
-                    Study</button>
-                <button id="breakBtn" class="main-btn" style="background: #e67e22; display: none;"
-                    onclick="stopTimer()">Take Break</button>
+            <div class="card">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px">
+                    <h2 style="margin:0;">Active Courses</h2>
+                    <div style="display:flex; align-items:center; gap:8px">
+                        <small style="opacity:0.8;">Playback Speed:</small>
+                        <select id="globalSpeed" style="width:90px; padding:6px 8px; border-radius:8px;"
+                            onchange="changeGlobalSpeed()">
+                            <option value="1">1.0x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="1.75">1.75x</option>
+                            <option value="2">2.0x</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="filter-container">
+                    <div class="search-wrapper">
+                        <input id="searchInput" class="search-input"
+                            placeholder="🔍 Search course, subject or chapter..." onkeyup="filterTasks()">
+                    </div>
+                    <div class="sort-wrapper">
+                        <select id="sortFilter" class="modern-select" onchange="renderTasks()">
+                            <option value="default">📑 Default (A-Z Subject)</option>
+                            <option value="total-high">📊 Classes (High to Low)</option>
+                            <option value="total-low">📊 Classes (Low to High)</option>
+                            <option value="duration">⏱️ Duration (Shortest First)</option>
+                            <option value="progress-high">📈 Most Progress (Done %)</option>
+                            <option value="progress-low">📉 Least Progress (Done %)</option>
+                            <option value="section-tasks-high">📂 Subject (More Courses First)</option>
+                            <option value="section-tasks-low">📂 Subject (Less Courses First)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="taskList">
+                </div>
             </div>
-            <p style="margin-top: 10px; font-size: 14px;">
-                Today's Focus: <span id="todayStudyTime">0h 0m 0s</span> |
-                Total Break: <span id="todayBreakTime">0h 0m 0s</span>
-            </p>
+        </div><!-- end Courses section-group -->
+
+        <!-- ===== PROGRESS & FOCUS ===== -->
+        <div class="section-group">
+            <div class="section-label">Progress & Focus</div>
+            <div class="card">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <h2 id="progressTitle" style="margin:0;">Overall Progress</h2>
+                    <span id="selectionModeText" class="selection-indicator"></span>
+                </div>
+
+                <div class="input-group" style="margin-top: 14px;">
+                    <div>
+                        <label><small>Deadline</small></label>
+                        <input type="datetime-local" id="targetDate" onchange="saveSettings()">
+                    </div>
+                    <div>
+                        <label><small>Daily Goal (Hrs)</small></label>
+                        <input type="number" id="dailyHours" onchange="saveSettings()">
+                    </div>
+                </div>
+                <div class="prog-bg" style="height: 18px;">
+                    <div id="overallProgBar" class="prog-fill"></div>
+                </div>
+                <div id="congratsMessage"
+                    style="text-align: center; margin-top: 10px; font-weight: 600; min-height: 20px; color: var(--primary);">
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-box"><small>Selected Done</small><span class="stat-val" id="percentDone">0%</span>
+                    </div>
+                    <div class="stat-box"><small>Time Left</small><span class="stat-val" id="totalTimeLeft">0h 0m</span>
+                    </div>
+                    <div class="stat-box" style="background:var(--primary); color:white;"><small>Target/Day</small><span
+                            class="stat-val" id="reqStudyTime">0h/d</span></div>
+                    <div class="stat-box"><small>Est. Finish</small><span class="stat-val" id="finishDays">0 Days</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="streak-card">
+                <div class="streak-info">
+                    <h4>🔥 Study Streak</h4>
+                    <p id="streakStatus">Keep it up!</p>
+                </div>
+                <div class="streak-count" id="streakCount">0 Days</div>
+            </div>
+
+            <div class="card" style="text-align: center; border: 2px solid var(--primary);">
+                <h3 style="margin-bottom: 8px;">⏱️ Focus Timer</h3>
+                <div style="font-size: 2.5rem; font-weight: 800; margin: 12px 0; font-family: monospace; letter-spacing: 2px;"
+                    id="timerDisplay">
+                    00:00:00</div>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button id="startBtn" class="main-btn" style="background: #27ae60; max-width: 180px;"
+                        onclick="startTimer()">Start
+                        Study</button>
+                    <button id="breakBtn" class="main-btn" style="background: #e67e22; display: none; max-width: 180px;"
+                        onclick="stopTimer()">Take Break</button>
+                </div>
+                <p style="margin-top: 14px; font-size: 14px; opacity: 0.9;">
+                    Today's Focus: <span id="todayStudyTime">0h 0m 0s</span> |
+                    Total Break: <span id="todayBreakTime">0h 0m 0s</span>
+                </p>
+            </div>
         </div>
 
         <!-- Script For Focus Timer -->
@@ -1322,12 +1502,16 @@
             }
         </script>
 
-        <div class="card">
-            <h3>📊 Subject-wise Progress</h3>
-            <canvas id="subjectChart" style="max-height: 400px;"></canvas>
-            <h3>📅 Activity Heatmap (Last 30 Days)</h3>
-            <div class="heatmap-container">
-                <div id="activityHeatmap" class="heatmap"></div>
+        <!-- ===== ANALYTICS ===== -->
+        <div class="section-group">
+            <div class="section-label">Analytics</div>
+            <div class="card">
+                <h3>📊 Subject-wise Progress</h3>
+                <canvas id="subjectChart" style="max-height: 400px;"></canvas>
+                <h3 style="margin-top: 28px;">📅 Activity Heatmap (Last 30 Days)</h3>
+                <div class="heatmap-container">
+                    <div id="activityHeatmap" class="heatmap"></div>
+                </div>
             </div>
         </div>
 
@@ -1337,27 +1521,34 @@
 
             function updateAnalytics() {
                 const canvas = document.getElementById('subjectChart');
-                if (!canvas) return; // ক্যানভাস না থাকলে ফাংশন থামিয়ে দেবে
+                if (!canvas) return;
 
                 const ctx = canvas.getContext('2d');
 
-                // ১. ডাটা প্রসেসিং
+                // ১. ডাটা প্রসেসিং (Case-insensitive & Trimmed grouping)
                 const subjectData = {};
+
                 tasks.forEach(task => {
-                    if (!subjectData[task.subject]) {
-                        subjectData[task.subject] = { total: 0, done: 0 };
+                    // সাবজেক্টের নামকে ক্লিন এবং স্ট্যান্ডার্ড ফরম্যাটে আনা
+                    let subName = (task.subject || "Other").trim();
+
+                    if (!subjectData[subName]) {
+                        subjectData[subName] = { total: 0, done: 0 };
                     }
-                    subjectData[task.subject].total += task.total;
-                    subjectData[task.subject].done += task.doneClasses.length;
+
+                    const doneCount = Array.isArray(task.doneClasses) ? task.doneClasses.length : 0;
+                    subjectData[subName].total += (parseInt(task.total) || 0);
+                    subjectData[subName].done += doneCount;
                 });
 
                 const labels = Object.keys(subjectData);
                 const progressValues = labels.map(sub => {
                     const data = subjectData[sub];
-                    return Math.round((data.done / data.total) * 100) || 0;
+                    if (data.total === 0) return 0;
+                    return Math.round((data.done / data.total) * 100);
                 });
 
-                // ২. ডাইনামিক কালার জেনারেটর (একেক সাবজেক্টের জন্য আলাদা রঙ)
+                // ২. ডাইনামিক কালার জেনারেটর
                 const backgroundColors = labels.map((_, index) => {
                     const colors = [
                         'rgba(108, 92, 231, 0.7)',  // বেগুনি
@@ -1369,17 +1560,17 @@
                         'rgba(250, 177, 160, 0.7)', // কোরাল
                         'rgba(9, 132, 227, 0.7)'    // নীল
                     ];
-                    return colors[index % colors.length]; // লিস্টের চেয়ে সাবজেক্ট বেশি হলে আবার শুরু থেকে রঙ নেবে
+                    return colors[index % colors.length];
                 });
 
                 const borderColors = backgroundColors.map(color => color.replace('0.7', '1'));
 
-                // ৩. আগের চার্ট ডিলিট করা
+                // ৩. আগের চার্ট ধ্বংস করা
                 if (myChart) {
                     myChart.destroy();
                 }
 
-                // ৪. নতুন চার্ট তৈরি
+                // ৪. নতুন চার্ট রেন্ডার
                 myChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -1387,7 +1578,7 @@
                         datasets: [{
                             label: 'Completion %',
                             data: progressValues,
-                            backgroundColor: backgroundColors, // এখানে ডাইনামিক কালার ব্যবহার করা হয়েছে
+                            backgroundColor: backgroundColors,
                             borderColor: borderColors,
                             borderWidth: 2,
                             borderRadius: 5
@@ -1400,7 +1591,7 @@
                             y: {
                                 beginAtZero: true,
                                 max: 100,
-                                ticks: { callback: value => value + "%" } // সাইডে % দেখাবে
+                                ticks: { callback: value => value + "%" }
                             }
                         },
                         plugins: {
@@ -1411,32 +1602,37 @@
             }
         </script>
 
-        <div class="card">
-            <h3>🎨 Personalization & Themes</h3>
-            <div class="input-group" style="grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));">
-                <div>
-                    <label><small>Heading/Theme</small></label>
-                    <input type="color" id="color-theme" value="#6c5ce7" onchange="updateCustomColors()">
+        <!-- ===== PERSONALIZATION ===== -->
+        <div class="section-group">
+            <div class="section-label">Appearance</div>
+            <div class="card">
+                <h3>🎨 Personalization & Themes</h3>
+                <div class="input-group" style="grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));">
+                    <div>
+                        <label><small>Heading/Theme</small></label>
+                        <input type="color" id="color-theme" value="#6c5ce7" onchange="updateCustomColors()">
+                    </div>
+                    <div>
+                        <label><small>0-25% Done</small></label>
+                        <input type="color" id="color-25" value="#ff7675" onchange="updateCustomColors()">
+                    </div>
+                    <div>
+                        <label><small>26-50% Done</small></label>
+                        <input type="color" id="color-50" value="#fdcb6e" onchange="updateCustomColors()">
+                    </div>
+                    <div>
+                        <label><small>51-75% Done</small></label>
+                        <input type="color" id="color-75" value="#00cec9" onchange="updateCustomColors()">
+                    </div>
+                    <div>
+                        <label><small>76-100% Done</small></label>
+                        <input type="color" id="color-100" value="#00b894" onchange="updateCustomColors()">
+                    </div>
                 </div>
-                <div>
-                    <label><small>0-25% Done</small></label>
-                    <input type="color" id="color-25" value="#ff7675" onchange="updateCustomColors()">
-                </div>
-                <div>
-                    <label><small>26-50% Done</small></label>
-                    <input type="color" id="color-50" value="#fdcb6e" onchange="updateCustomColors()">
-                </div>
-                <div>
-                    <label><small>51-75% Done</small></label>
-                    <input type="color" id="color-75" value="#00cec9" onchange="updateCustomColors()">
-                </div>
-                <div>
-                    <label><small>76-100% Done</small></label>
-                    <input type="color" id="color-100" value="#00b894" onchange="updateCustomColors()">
-                </div>
+                <button class="btn-small" style="margin-top:12px; background:var(--border); padding:8px 14px;"
+                    onclick="resetColors()">Reset to
+                    Default</button>
             </div>
-            <button class="btn-small" style="margin-top:10px; background:var(--border)" onclick="resetColors()">Reset to
-                Default</button>
         </div>
 
         <!-- Script for custom color -->
@@ -1497,6 +1693,7 @@
                 loadSettings();
                 loadCustomColors(); // নতুন ফাংশন
                 loadStudyTimer();
+                loadGlobalSpeed();
                 document.documentElement.setAttribute("data-theme", localStorage.getItem("theme") || "light");
 
                 const savedUser = localStorage.getItem("activeUser");
@@ -1532,6 +1729,7 @@
 
             if (savedBin) {
                 BIN_ID = savedBin;
+                BIN_ID1 = savedBin;
                 document.getElementById('jsonbinBinId').value = savedBin;
             }
 
@@ -1556,6 +1754,7 @@
 
             // Variable update kora (jate refresh chadao kaj kore)
             API_KEY = keyInput;
+            BIN_ID = binInput;
             BIN_ID1 = binInput;
 
             document.getElementById('apiStatus').innerText = "✨ Successfully Saved & Connected!";
@@ -1606,15 +1805,15 @@
             currentUser = name;
             localStorage.setItem('activeUser', name);
 
-            // ওই নির্দিষ্ট ইউজারের ডেটা লোড করা
             tasks = JSON.parse(localStorage.getItem(`tasks_${name}`)) || [];
             selectedTaskIds = new Set(JSON.parse(localStorage.getItem(`selected_${name}`)) || []);
 
-            document.getElementById('profileDisplay').innerText = name.toUpperCase(); // ডিসপ্লে আপডেট
-            document.getElementById('profileDisplay1').innerText = name.toUpperCase(); // ডিসপ্লে আপডেট
+            document.getElementById('profileDisplay').innerText = name.toUpperCase();
+            document.getElementById('profileDisplay1').innerText = name.toUpperCase();
+
+            loadSettings(); // <--- এই লাইনটি যুক্ত করুন
             renderTasks();
-            loadStudyTimer(); // টাইমার লোড হবে যখন ইউজার লগইন করবে
-            // alert(`Welcome, ${name}!`);
+            loadStudyTimer();
         }
 
         function switchUser() {
@@ -2090,14 +2289,44 @@
         }
 
         function loadSettings() {
-            document.getElementById('targetDate').value = localStorage.getItem('trackerDeadline') || "";
-            document.getElementById('dailyHours').value = localStorage.getItem('trackerDailyHrs') || "4";
+            if (!currentUser) return;
+
+            // ইউজার নির্দিষ্ট ডেডলাইন ও ডেইলি গোল লোড করা
+            const deadline = localStorage.getItem(`trackerDeadline_${currentUser}`) || "";
+            const dailyHrs = localStorage.getItem(`trackerDailyHrs_${currentUser}`) || "4";
+
+            document.getElementById('targetDate').value = deadline;
+            document.getElementById('dailyHours').value = dailyHrs;
         }
 
         function saveSettings() {
-            localStorage.setItem('trackerDeadline', document.getElementById('targetDate').value);
-            localStorage.setItem('trackerDailyHrs', document.getElementById('dailyHours').value);
+            if (!currentUser) return;
+
+            const deadlineVal = document.getElementById('targetDate').value;
+            const dailyHrsVal = document.getElementById('dailyHours').value;
+
+            // ১. লোকাল স্টোরেজে ইউজার নির্দিষ্ট কি (Key) দিয়ে সেভ করা
+            localStorage.setItem(`trackerDeadline_${currentUser}`, deadlineVal);
+            localStorage.setItem(`trackerDailyHrs_${currentUser}`, dailyHrsVal);
+
+            // ২. ক্লাউড সিঙ্ক ট্রিগার করা
+            saveData();
             renderTasks();
+        }
+
+        // স্পিড পরিবর্তন হলে LocalStorage-এ সেভ করা
+        function changeGlobalSpeed() {
+            const speed = document.getElementById('globalSpeed').value;
+            localStorage.setItem('globalSpeed', speed);
+            renderTasks();
+        }
+
+        // পেজ লোড হলে Saved speed সিলেক্ট করে দেওয়া
+        function loadGlobalSpeed() {
+            const savedSpeed = localStorage.getItem('globalSpeed');
+            if (savedSpeed) {
+                document.getElementById('globalSpeed').value = savedSpeed;
+            }
         }
 
         function toggleTheme() {
@@ -2359,21 +2588,28 @@
             localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
             const activityLog = JSON.parse(localStorage.getItem(`activityLog_${currentUser}`)) || {};
 
+            // ডেইলি গোল এবং ডেডলাইন রিড করা
+            const settings = {
+                deadline: localStorage.getItem(`trackerDeadline_${currentUser}`) || "",
+                dailyHrs: localStorage.getItem(`trackerDailyHrs_${currentUser}`) || "4"
+            };
+
             try {
-                // Prothome cloud theke biddoman sob data namiye nite hobe
+                // প্রথমে ক্লাউড থেকে বিদ্যমান সব ডেটা নামিয়ে আনা
                 const getRes = await fetch(API_URL, {
                     headers: { 'X-Master-Key': API_KEY }
                 });
                 const currentCloudData = await getRes.json();
                 let allUsersData = currentCloudData.record || {};
 
-                // Sudhu bortoman user-er ongshoti update kora
+                // ইউজারের ডেটার ভেতরে settings যুক্ত করা
                 allUsersData[currentUser] = {
                     tasks: tasks,
-                    activity: activityLog
+                    activity: activityLog,
+                    settings: settings
                 };
 
-                // Puro object-ti abar save kora
+                // পুরো অবজেক্টটি ক্লাউডে পুশ করা
                 const response = await fetch(API_URL, {
                     method: 'PUT',
                     headers: {
@@ -2384,7 +2620,7 @@
                 });
 
                 if (response.ok) {
-                    console.log(`✅ ${currentUser}'s data is syncing!`);
+                    console.log(`✅ ${currentUser}'s data & settings syncing!`);
                 }
             } catch (e) {
                 console.error("❌ Sync Error:", e);
@@ -2400,36 +2636,51 @@
                 });
                 const res = await response.json();
 
-                if (response.ok && res.record && res.record[currentUser]) {
-                    const userData = res.record[currentUser];
-                    tasks = userData.tasks || [];
-                    const activityLog = userData.activity || {};
+                if (response.ok && res.record) {
+                    const allRecords = res.record;
 
-                    localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
-                    localStorage.setItem(`activityLog_${currentUser}`, JSON.stringify(activityLog));
+                    // ১. ইউজার নির্দিষ্ট টাস্ক, অ্যাক্টিভিটি ও সেটিংস লোড করা
+                    if (allRecords[currentUser]) {
+                        const userData = allRecords[currentUser];
+                        tasks = userData.tasks || [];
+                        const activityLog = userData.activity || {};
+                        const settings = userData.settings || {};
 
-                    renderTasks();
-                    updateStreaksAndHeatmap();
+                        localStorage.setItem(`tasks_${currentUser}`, JSON.stringify(tasks));
+                        localStorage.setItem(`activityLog_${currentUser}`, JSON.stringify(activityLog));
+
+                        // সেটিংস লোকাল স্টোরেজে সেট করা
+                        if (settings.deadline !== undefined) {
+                            localStorage.setItem(`trackerDeadline_${currentUser}`, settings.deadline);
+                        }
+                        if (settings.dailyHrs !== undefined) {
+                            localStorage.setItem(`trackerDailyHrs_${currentUser}`, settings.dailyHrs);
+                        }
+
+                        loadSettings();
+                        renderTasks();
+                        updateStreaksAndHeatmap();
+                    }
+
+                    // ২. টাইমার ডাটা ক্লাউড থেকে লোড করা (আপনার আগের টাইমার লজিক)
+                    if (allRecords[`timer_${currentUser}`]) {
+                        const cloudTimer = allRecords[`timer_${currentUser}`];
+                        totalStudyTime = Number(cloudTimer.totalStudyTime) || 0;
+                        totalBreakTime = Number(cloudTimer.totalBreakTime) || 0;
+                        sessionsCompleted = Number(cloudTimer.sessionsCompleted) || 0;
+
+                        // রিফ্রেশ করার পর যদি টাইমার রানিং থাকে তবে তা চালু রাখা
+                        if (cloudTimer.isRunning) {
+                            isTimerRunning = true;
+                            if (!window.timerInterval) {
+                                window.timerInterval = setInterval(updateTimerDisplay, 1000);
+                            }
+                        }
+                        updateTimerDisplay(); // ডিসপ্লে আপডেট করা
+                    }
                 }
             } catch (e) {
                 console.error("❌ Load Error:", e);
-            }
-
-            // টাইমার ডাটা ক্লাউড থেকে লোড করা
-            if (record[`timer_${currentUser}`]) {
-                const cloudTimer = record[`timer_${currentUser}`];
-                totalStudyTime = Number(cloudTimer.totalStudyTime) || 0;
-                totalBreakTime = Number(cloudTimer.totalBreakTime) || 0;
-                sessionsCompleted = Number(cloudTimer.sessionsCompleted) || 0;
-
-                // রিফ্রেশ করার পর যদি টাইমার রানিং থাকে তবে তা চালু রাখা
-                if (cloudTimer.isRunning) {
-                    isTimerRunning = true;
-                    if (!window.timerInterval) {
-                        window.timerInterval = setInterval(updateTimerDisplay, 1000);
-                    }
-                }
-                updateTimerDisplay(); // ডিসপ্লে আপডেট করা
             }
 
             if (currentUser) {
