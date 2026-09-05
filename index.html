@@ -415,8 +415,8 @@
             display: none;
             margin-top: 15px;
             background: var(--bg-body);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 20px 16px 16px;
+            border-radius: 12px;
         }
 
         .editing .edit-fields {
@@ -1045,6 +1045,106 @@
             border: none;
             border-radius: 6px;
         }
+
+        /* ===== Perfect Floating Label System ===== */
+        .floating-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .floating-group input {
+            width: 100%;
+            height: 52px;
+            padding: 8px 14px 8px 14px !important;
+            border-radius: 10px;
+            border: 1.5px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .floating-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.18);
+        }
+
+        .floating-group label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 5px;
+            margin: 0;
+            background: var(--bg-card);
+            color: #747d8c;
+            font-size: 0.92rem;
+            font-weight: 500;
+            pointer-events: none;
+            transition: all 0.18s ease;
+            z-index: 2;
+            line-height: 1;
+        }
+
+        /* যখন ফোকাস বা টেক্সট থাকে */
+        .floating-group input:focus~label,
+        .floating-group input:not(:placeholder-shown)~label {
+            top: 0;
+            transform: translateY(-50%) scale(0.82);
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 0.2px;
+        }
+
+        /* Dark mode */
+        [data-theme="dark"] .floating-group input {
+            background: var(--bg-card);
+        }
+
+        [data-theme="dark"] .floating-group label {
+            background: var(--bg-card);
+            color: #94a3b8;
+        }
+
+        [data-theme="dark"] .floating-group input:focus~label,
+        [data-theme="dark"] .floating-group input:not(:placeholder-shown)~label {
+            color: var(--primary);
+        }
+
+        /* Edit fields এর ভিতরে background মিলিয়ে দেওয়া */
+        .edit-fields .floating-group input,
+        .edit-fields .floating-group label {
+            background: var(--bg-body);
+        }
+
+        [data-theme="dark"] .edit-fields .floating-group input,
+        [data-theme="dark"] .edit-fields .floating-group label {
+            background: var(--bg-body);
+        }
+
+        /* Attractive Instruction Text */
+        .instruction-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.08), rgba(0, 206, 201, 0.08));
+            border: 1px solid rgba(108, 92, 231, 0.18);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin: 0 0 20px 0;
+            position: relative;
+        }
+
+        .instruction-text b {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .instruction-text {
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(0, 206, 201, 0.1));
+            border-color: rgba(108, 92, 231, 0.3);
+        }
     </style>
 </head>
 
@@ -1129,17 +1229,46 @@
 
                     <div class="card">
                         <h2>Add New Course</h2>
+                        <p class="instruction-text">
+                            📌 Enter course details carefully.
+                            For <b>Done Classes</b>, <b>Class Links</b> & <b>Note Link</b> — use comma separated values.
+                            <b>Class Duration</b> is an <b>Average Value</b> & should be in <b>minutes</b>.
+                        </p>
                         <div class="input-group">
-                            <input type="text" id="courseName" placeholder="Course Name">
-                            <input type="text" id="subjectName" placeholder="Subject (e.g. Physics)">
-                            <input type="text" id="chapterNo" placeholder="Chapter No">
-                            <input type="number" id="totalClasses" placeholder="Total Classes">
-                            <input type="text" id="doneClassList" placeholder="Done Class # (e.g. 1, 2)">
-                            <input type="number" id="avgDuration" placeholder="Avg Min" value="45">
+                            <div class="floating-group">
+                                <input type="text" id="courseName" placeholder=" ">
+                                <label for="courseName">Course</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="subjectName" placeholder=" ">
+                                <label for="subjectName">Subject</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="chapterNo" placeholder=" ">
+                                <label for="chapterNo">Chapter No</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="number" id="totalClasses" placeholder=" ">
+                                <label for="totalClasses">Total Classes</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="doneClassList" placeholder=" ">
+                                <label for="doneClassList">Done Classes</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="number" id="avgDuration" value="45" placeholder=" ">
+                                <label for="avgDuration">Class Duration</label>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="classLinks" placeholder="Class Links (Comma separated)">
-                            <input type="text" id="noteLink" placeholder="Class Note Link (Optional)">
+                            <div class="floating-group">
+                                <input type="text" id="classLinks" placeholder=" ">
+                                <label for="classLinks">Class Links</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="noteLink" placeholder=" ">
+                                <label for="noteLink">Note Links</label>
+                            </div>
                         </div>
                         <button class="main-btn" onclick="addTask()">+ Add to Planner</button>
                     </div>
@@ -1874,24 +2003,25 @@
             const doneArr = doneListInput.value.split(',').map(n => n.trim()).filter(n => n !== "");
             const task = {
                 id: Date.now(),
-                course: courseInput.value || 'Untitled',
-                subject: subjectInput.value || 'General',
-                chapter: chapterInput.value || '-',
+                course: courseInput.value.trim() || 'Untitled',
+                subject: subjectInput.value.trim() || 'General',   // ← এখানে .trim() যোগ করুন
+                chapter: chapterInput.value.trim() || '-',
                 total: parseInt(totalInput.value) || 0,
                 doneClasses: doneArr,
                 duration: parseInt(durInput.value) || 0,
-                links: linksInput.value ? linksInput.value.split(',').map(l => l.trim()) : [],
-                note: noteLink.value.trim()
+                links: linksInput.value ? linksInput.value.split(',').map(l => l.trim()).filter(l => l) : [],
+                note: (document.getElementById('noteLink').value || '').trim()   // ← এটাও ঠিক করুন (আগে noteLink undefined ছিল)
             };
 
             tasks.push(task);
             saveTasks();
+            updateStreaksAndHeatmap();
 
             chapterInput.value = '';
             totalInput.value = '';
             doneListInput.value = '';
             linksInput.value = '';
-            noteLink.value = '';
+            document.getElementById('noteLink').value = '';
             courseInput.focus();
         }
 
@@ -1935,7 +2065,7 @@
             }
 
             const grouped = sortedTasks.reduce((acc, task) => {
-                const sub = task.subject || "Other";
+                const sub = (task.subject || "Other").trim();   // ← .trim() যোগ করুন
                 if (!acc[sub]) acc[sub] = [];
                 acc[sub].push(task);
                 return acc;
@@ -1997,22 +2127,46 @@
                             </div>
                         </div>
                     </div>
-                    <div class="edit-fields">
+                                        <div class="edit-fields">
                         <div class="input-group">
-                            <input type="text" id="e-course-${task.id}" value="${task.course}" placeholder="Course Name">
-                            <input type="text" id="e-sub-${task.id}" value="${task.subject}" placeholder="Subject Name">
-                            <input type="text" id="e-ch-${task.id}" value="${task.chapter}" placeholder="Chapter/Module No">
+                            <div class="floating-group">
+                                <input type="text" id="e-course-${task.id}" value="${task.course}" placeholder=" ">
+                                <label for="e-course-${task.id}">Course Name</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="e-sub-${task.id}" value="${task.subject}" placeholder=" ">
+                                <label for="e-sub-${task.id}">Subject Name</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="e-ch-${task.id}" value="${task.chapter}" placeholder=" ">
+                                <label for="e-ch-${task.id}">Chapter</label>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <input type="number" id="e-total-${task.id}" value="${task.total}" placeholder="Total Classes">
-                            <input type="text" id="e-done-${task.id}" value="${task.doneClasses.join(', ')}" placeholder="Done Classes (Comma Separated)">
-                            <input type="number" id="e-dur-${task.id}" value="${task.duration}" placeholder="Average Class Duration">
+                            <div class="floating-group">
+                                <input type="number" id="e-total-${task.id}" value="${task.total}" placeholder=" ">
+                                <label for="e-total-${task.id}">Total Classes</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="e-done-${task.id}" value="${task.doneClasses.join(', ')}" placeholder=" ">
+                                <label for="e-done-${task.id}">Done Classes</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="number" id="e-dur-${task.id}" value="${task.duration}" placeholder=" ">
+                                <label for="e-dur-${task.id}">Avg Duration</label>
+                            </div>
                         </div>
                         <div class="input-group">
-                            <input type="text" id="e-links-${task.id}" value="${task.links.join(', ')}" placeholder="Video Link">
-                            <input type="text" id="e-note-${task.id}" value="${task.note || ''}" placeholder="Slide Link">
+                            <div class="floating-group">
+                                <input type="text" id="e-links-${task.id}" value="${task.links.join(', ')}" placeholder=" ">
+                                <label for="e-links-${task.id}">Video Links</label>
+                            </div>
+                            <div class="floating-group">
+                                <input type="text" id="e-note-${task.id}" value="${task.note || ''}" placeholder=" ">
+                                <label for="e-note-${task.id}">Note / Slide Link</label>
+                            </div>
                         </div>
-                        <div style="display:flex; gap:10px;">
+                        <div style="display:flex; gap:10px; margin-top:12px;">
                             <button class="main-btn" style="background:#00b894" onclick="handleSaveEdit(${task.id})">Save</button>
                             <button class="main-btn" style="background:#b2bec3" onclick="toggleEdit(${task.id})">Cancel</button>
                         </div>
@@ -2054,9 +2208,9 @@
 
         function saveEdit(id) {
             const t = tasks.find(x => x.id === id);
-            t.course = document.getElementById(`e-course-${id}`).value;
-            t.subject = document.getElementById(`e-sub-${id}`).value;
-            t.chapter = document.getElementById(`e-ch-${id}`).value;
+            t.course = document.getElementById(`e-course-${id}`).value.trim();
+            t.subject = document.getElementById(`e-sub-${id}`).value.trim();   // ← .trim()
+            t.chapter = document.getElementById(`e-ch-${id}`).value.trim();
             t.total = parseInt(document.getElementById(`e-total-${id}`).value) || 0;
             const doneInput = document.getElementById(`e-done-${id}`).value;
             t.doneClasses = doneInput.split(',').map(n => n.trim()).filter(n => n !== "");
@@ -2212,7 +2366,7 @@
             const dailyHrsVal = document.getElementById('dailyHours').value;
             localStorage.setItem(`trackerDeadline_${currentUser}`, deadlineVal);
             localStorage.setItem(`trackerDailyHrs_${currentUser}`, dailyHrsVal);
-            saveData();
+            // saveData() কল না করলেও চলবে, কারণ Sync Cloud বাটনই এখন settings নিয়ে যাবে
             renderTasks();
         }
 
@@ -2273,13 +2427,28 @@
                     if (cloudData.users[user] && cloudData.users[user].password !== pass) {
                         return msg.innerText = "Wrong Password! Doesn't match with server password!";
                     }
+
+                    // settings
+                    const settings = {
+                        deadline: localStorage.getItem(`trackerDeadline_${user}`) || document.getElementById('targetDate').value || "",
+                        dailyHrs: localStorage.getItem(`trackerDailyHrs_${user}`) || document.getElementById('dailyHours').value || "4"
+                    };
+
+                    // Activity data (নতুন)
+                    const activityLog = JSON.parse(localStorage.getItem(`activityLog_${user}`)) || {};
+                    const lastTotalDone = parseInt(localStorage.getItem(`lastTotalDone_${user}`)) || 0;
+
                     cloudData.users[user] = {
                         password: pass,
                         data: {
                             tasks: tasks,
-                            selected: Array.from(selectedTaskIds)
+                            selected: Array.from(selectedTaskIds),
+                            settings: settings,
+                            activityLog: activityLog,           // ← নতুন
+                            lastTotalDone: lastTotalDone        // ← নতুন
                         }
                     };
+
                     await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                         method: 'PUT',
                         headers: {
@@ -2297,6 +2466,21 @@
                         const userData = cloudData.users[user].data;
                         tasks = userData.tasks || [];
                         selectedTaskIds = new Set(userData.selected || []);
+
+                        // settings
+                        if (userData.settings) {
+                            localStorage.setItem(`trackerDeadline_${user}`, userData.settings.deadline || "");
+                            localStorage.setItem(`trackerDailyHrs_${user}`, userData.settings.dailyHrs || "4");
+                        }
+
+                        // Activity data লোড (নতুন)
+                        if (userData.activityLog) {
+                            localStorage.setItem(`activityLog_${user}`, JSON.stringify(userData.activityLog));
+                        }
+                        if (userData.lastTotalDone !== undefined) {
+                            localStorage.setItem(`lastTotalDone_${user}`, userData.lastTotalDone);
+                        }
+
                         localStorage.setItem(`tasks_${user}`, JSON.stringify(tasks));
                         localStorage.setItem(`selected_${user}`, JSON.stringify(Array.from(selectedTaskIds)));
                         localStorage.setItem("activeUser", user);
@@ -2551,20 +2735,34 @@
 
             let activityLog = JSON.parse(localStorage.getItem(`activityLog_${currentUser}`)) || {};
             const today = new Date().toISOString().split('T')[0];
-            let completedToday = 0;
 
+            // বর্তমানে মোট কতগুলো ক্লাস সম্পন্ন হয়েছে
+            let currentTotalDone = 0;
             tasks.forEach(task => {
-                task.doneClasses.forEach(done => {
-                    if (done.date === today) completedToday++;
-                });
+                if (Array.isArray(task.doneClasses)) {
+                    currentTotalDone += task.doneClasses.length;
+                }
             });
 
-            activityLog[today] = completedToday;
+            // আগের মোট সম্পন্ন ক্লাস
+            const lastTotalDone = parseInt(localStorage.getItem(`lastTotalDone_${currentUser}`)) || 0;
+
+            // যদি নতুন ক্লাস সম্পন্ন হয়, তাহলে আজকের অ্যাক্টিভিটিতে যোগ করো
+            if (currentTotalDone > lastTotalDone) {
+                const newlyCompleted = currentTotalDone - lastTotalDone;
+                activityLog[today] = (activityLog[today] || 0) + newlyCompleted;
+                localStorage.setItem(`lastTotalDone_${currentUser}`, currentTotalDone);
+            }
+
+            // যদি কোনো ক্লাস ডিলিট হয়ে যায়, তাহলে lastTotalDone আপডেট করে রাখি
+            if (currentTotalDone < lastTotalDone) {
+                localStorage.setItem(`lastTotalDone_${currentUser}`, currentTotalDone);
+            }
+
             localStorage.setItem(`activityLog_${currentUser}`, JSON.stringify(activityLog));
 
             renderStreak(activityLog);
             renderHeatmap(activityLog);
-            saveData();
         }
 
         function renderStreak(activityLog) {
@@ -2585,7 +2783,7 @@
                 }
             }
 
-            document.getElementById('streakCount').innerText = `${streak} Days`;
+            document.getElementById('streakCount').innerText = streak === 1 ? `1 Day` : `${streak} Days`;
             document.getElementById('streakStatus').innerText = streak > 0 ? "You are on fire! 🚀" : "Start your journey today!";
         }
 
